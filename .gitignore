@@ -1,0 +1,7 @@
+# Rust
+Cargo.lock
+/target
+
+# local IDE configs
+/.idea
+/.vscode
