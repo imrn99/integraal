@@ -1,6 +1,6 @@
 //! module doc
 
-pub enum ComputeMethod {
+pub enum ProcessMethod {
     Rectangle,
     Trapezoid,
     MonteCarlo,
