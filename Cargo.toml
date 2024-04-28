@@ -13,6 +13,10 @@ name = "rectangle_hardcoded"
 path = "examples/rectangle/hardcoded.rs"
 
 [[example]]
+name = "rectangle_integraal"
+path = "examples/rectangle/integraal.rs"
+
+[[example]]
 name = "trapezoid_hardcoded"
 path = "examples/trapezoid/hardcoded.rs"
 
