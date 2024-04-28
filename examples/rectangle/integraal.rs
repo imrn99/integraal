@@ -1,20 +1,20 @@
+use integraal::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal};
+
 fn main() {
-    // describe Xs
-    // 100_001 samples
-    let step = 0.00001;
-    let args = (1..100001).map(|step_id| step * step_id as f64);
+    // describe domain, function & computation method
+    let domain = DomainDescriptor::default().n_step(100_001).step(0.00001);
+    let function = FunctionDescriptor::Closure {
+        closure: Box::new(|x: f64| 2.0 * x),
+    };
+    let method = ComputeMethod::Rectangle;
 
-    // describe Ys
-    let closure = |x: f64| 2.0 * x;
+    // build the integral
+    let integral = Integraal::default()
+        .domain(domain)
+        .function(function)
+        .method(method);
 
-    // compute Ys from Xs
-    // 100_001 samples yields 100_001 rectangle
-    let rets = args.map(closure);
-
-    // compute rectangle areas
-    let areas = rets.map(|ret| ret * step);
-
-    // reduce & print result
-    let res: f64 = areas.sum();
+    // compute & print
+    let res: f64 = integral.compute().unwrap();
     println!("integral value of f(x) = 2 * x over [0; 1]: {res}");
 }

@@ -3,6 +3,7 @@
 use crate::parameters::ComputeMethod;
 use crate::{DomainDescriptor, FunctionDescriptor};
 
+#[derive(Debug)]
 pub enum IntegraalError {
     MissingParameters(&'static str),
 }

@@ -12,4 +12,5 @@ mod parameters;
 
 // --- RE-EXPORTS
 
-pub use parameters::{DomainDescriptor, FunctionDescriptor};
+pub use compute_unit::Integraal;
+pub use parameters::{ComputeMethod, DomainDescriptor, FunctionDescriptor};
