@@ -7,3 +7,15 @@ edition = "2021"
 
 [dev-dependencies]
 rand = { version = "0.9.0-alpha.1", features = ["small_rng"] }
+
+[[example]]
+name = "rectangle_hardcoded"
+path = "examples/rectangle/hardcoded.rs"
+
+[[example]]
+name = "trapezoid_hardcoded"
+path = "examples/trapezoid/hardcoded.rs"
+
+[[example]]
+name = "montecarlo_hardcoded"
+path = "examples/montecarlo/hardcoded.rs"

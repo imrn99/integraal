@@ -8,7 +8,7 @@ fn main() {
     let closure = |x: f64| 2.0 * x;
 
     // compute Ys from Xs
-    // 100_001 samples yields 100_001 rectangles
+    // 100_001 samples yields 100_001 rectangle
     let rets = args.map(closure);
 
     // compute rectangle areas
