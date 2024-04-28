@@ -7,9 +7,8 @@
 
 // --- MODULES DECLARATION
 
-mod functions;
-mod kernels;
 mod parameters;
-mod runner;
 
 // --- RE-EXPORTS
+
+pub use parameters::{DomainDescriptor, FunctionDescriptor};
