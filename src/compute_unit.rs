@@ -3,6 +3,10 @@
 use crate::parameters::ComputeMethod;
 use crate::{DomainDescriptor, FunctionDescriptor};
 
+pub enum IntegraalError {
+    MissingParameters(&'static str),
+}
+
 #[derive(Default)]
 pub struct Integraal {
     domain: Option<DomainDescriptor>,
@@ -26,7 +30,22 @@ impl Integraal {
         self
     }
 
-    pub fn compute(&self) -> f64 {
-        todo!()
+    pub fn compute(self) -> Result<f64, IntegraalError> {
+        if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
+            return Err(IntegraalError::MissingParameters(
+                "cannot compute integral - one or more parameter is missing",
+            ));
+        }
+        match &self.method.unwrap() {
+            ComputeMethod::Rectangle => {
+                todo!()
+            }
+            ComputeMethod::Trapezoid => {
+                todo!()
+            }
+            ComputeMethod::MonteCarlo { n_sample: _ } => {
+                todo!()
+            }
+        }
     }
 }
