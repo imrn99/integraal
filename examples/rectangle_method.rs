@@ -1,14 +1,20 @@
 fn main() {
-    let closure = |x: f64| 2.0 * x;
+    // describe Xs
+    // 100_001 samples
     let step = 0.00001;
-    // compute integral over the [0.0; 1.0] range using the right endpoint for rectangles
-    // compute Xs
     let args = (1..100001).map(|step_id| step * step_id as f64);
+
+    // describe Ys
+    let closure = |x: f64| 2.0 * x;
+
     // compute Ys from Xs
+    // 100_001 samples yields 100_001 rectangles
     let rets = args.map(closure);
+
     // compute rectangle areas
-    let rectangles = rets.map(|ret| ret * step);
+    let areas = rets.map(|ret| ret * step);
+
     // reduce & print result
-    let res: f64 = rectangles.sum();
+    let res: f64 = areas.sum();
     println!("integral value of f(x) = 2 * x over [0; 1]: {res}");
 }
