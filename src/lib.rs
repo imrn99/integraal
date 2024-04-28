@@ -7,6 +7,7 @@
 
 // --- MODULES DECLARATION
 
+mod compute_unit;
 mod parameters;
 
 // --- RE-EXPORTS
