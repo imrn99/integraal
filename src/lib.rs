@@ -2,6 +2,9 @@
 
 // --- CUSTOM LINTS
 
+// if compiling using nightly, enable auto feature-gates documentation
+#![cfg_attr(nightly, doc_auto_cfg)]
+// more lints
 #![warn(clippy::pedantic)]
 #![warn(missing_docs)]
 
