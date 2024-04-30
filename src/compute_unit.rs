@@ -31,22 +31,25 @@ impl Integraal {
         self
     }
 
-    pub fn compute(self) -> Result<f64, IntegraalError> {
+    pub fn compute(&mut self) -> Result<f64, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
                 "cannot compute integral - one or more parameter is missing",
             ));
         }
-        match &self.method.unwrap() {
-            ComputeMethod::Rectangle => {
+        let res = match self.method {
+            Some(ComputeMethod::Rectangle) => {
                 todo!()
             }
-            ComputeMethod::Trapezoid => {
+            Some(ComputeMethod::Trapezoid) => {
                 todo!()
             }
-            ComputeMethod::MonteCarlo { n_sample: _ } => {
+            Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
                 todo!()
             }
-        }
+            None => unreachable!(),
+        };
+        self.function = None;
+        Ok(res)
     }
 }
