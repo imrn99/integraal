@@ -9,14 +9,14 @@ pub enum IntegraalError {
 }
 
 #[derive(Default)]
-pub struct Integraal {
-    domain: Option<DomainDescriptor>,
+pub struct Integraal<'a> {
+    domain: Option<DomainDescriptor<'a>>,
     function: Option<FunctionDescriptor>,
     method: Option<ComputeMethod>,
 }
 
-impl Integraal {
-    pub fn domain(mut self, domain_descriptor: DomainDescriptor) -> Self {
+impl<'a> Integraal<'a> {
+    pub fn domain(mut self, domain_descriptor: DomainDescriptor<'a>) -> Self {
         self.domain = Some(domain_descriptor);
         self
     }
