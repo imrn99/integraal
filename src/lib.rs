@@ -10,10 +10,10 @@
 
 // --- MODULES DECLARATION
 
-mod compute_unit;
 mod parameters;
+mod structure;
 
 // --- RE-EXPORTS
 
-pub use compute_unit::Integraal;
 pub use parameters::{ComputeMethod, DomainDescriptor, FunctionDescriptor};
+pub use structure::Integraal;
