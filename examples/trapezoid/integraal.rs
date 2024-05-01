@@ -7,9 +7,7 @@ fn main() {
         step: 0.00001,
         n_step: 100_001,
     };
-    let function = FunctionDescriptor::Closure {
-        closure: Box::new(|x: f64| 2.0 * x),
-    };
+    let function = FunctionDescriptor::Closure(Box::new(|x: f64| 2.0 * x));
     let method = ComputeMethod::Trapezoid;
 
     // build the integral

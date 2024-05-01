@@ -79,14 +79,14 @@ impl<'a> Integraal<'a> {
             ));
         }
         let res = match (&self.function, &self.domain) {
-            (Some(FunctionDescriptor::Values { vals }), Some(DomainDescriptor::Explicit(args))) => {
+            (Some(FunctionDescriptor::Values(vals)), Some(DomainDescriptor::Explicit(args))) => {
                 if args.len() != vals.len() {
                     return Err(IntegraalError::InconsistentParameters("todo"));
                 }
                 todo!()
             }
             (
-                Some(FunctionDescriptor::Values { vals }),
+                Some(FunctionDescriptor::Values(vals)),
                 Some(DomainDescriptor::Uniform {
                     start: _,
                     step,
@@ -99,13 +99,13 @@ impl<'a> Integraal<'a> {
                 todo!()
             }
             (
-                Some(FunctionDescriptor::Closure { closure }),
+                Some(FunctionDescriptor::Closure(closure)),
                 Some(DomainDescriptor::Explicit(args)),
             ) => {
                 todo!()
             }
             (
-                Some(FunctionDescriptor::Closure { closure }),
+                Some(FunctionDescriptor::Closure(closure)),
                 Some(DomainDescriptor::Uniform {
                     start,
                     step,
