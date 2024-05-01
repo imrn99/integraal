@@ -6,6 +6,7 @@ use crate::{DomainDescriptor, FunctionDescriptor};
 #[derive(Debug)]
 pub enum IntegraalError {
     MissingParameters(&'static str),
+    InconsistentParameters(&'static str),
 }
 
 #[derive(Default)]
@@ -37,17 +38,43 @@ impl<'a> Integraal<'a> {
                 "cannot compute integral - one or more parameter is missing",
             ));
         }
-        let res = match self.method {
-            Some(ComputeMethod::Rectangle) => {
+        let res = match (&self.function, &self.domain) {
+            (Some(FunctionDescriptor::Values { vals }), Some(DomainDescriptor::Explicit(args))) => {
+                if args.len() != vals.len() {
+                    return Err(IntegraalError::InconsistentParameters("todo"));
+                }
                 todo!()
             }
-            Some(ComputeMethod::Trapezoid) => {
+            (
+                Some(FunctionDescriptor::Values { vals }),
+                Some(DomainDescriptor::Uniform {
+                    start: _,
+                    step,
+                    n_step,
+                }),
+            ) => {
+                if *n_step != vals.len() {
+                    return Err(IntegraalError::InconsistentParameters("todo"));
+                }
                 todo!()
             }
-            Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
+            (
+                Some(FunctionDescriptor::Closure { closure }),
+                Some(DomainDescriptor::Explicit(args)),
+            ) => {
                 todo!()
             }
-            None => unreachable!(),
+            (
+                Some(FunctionDescriptor::Closure { closure }),
+                Some(DomainDescriptor::Uniform {
+                    start,
+                    step,
+                    n_step,
+                }),
+            ) => {
+                todo!()
+            }
+            (_, _) => unreachable!(),
         };
         self.function = None;
         Ok(res)
