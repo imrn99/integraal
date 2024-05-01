@@ -17,5 +17,8 @@ pub enum FunctionDescriptor {
 pub enum ComputeMethod {
     Rectangle,
     Trapezoid,
-    MonteCarlo { n_sample: usize },
+    #[cfg(feature = "montecarlo")]
+    MonteCarlo {
+        n_sample: usize,
+    },
 }

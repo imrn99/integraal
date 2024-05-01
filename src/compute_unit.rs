@@ -89,6 +89,7 @@ impl<'a> Integraal<'a> {
                             step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
                         })
                         .sum(),
+                    #[cfg(feature = "montecarlo")]
                     Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
                         todo!()
                     }
