@@ -8,7 +8,6 @@ env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
   CARGO_NET_RETRY: 10
-  RUSTFLAGS: "-D warnings"
   RUSTUP_MAX_RETRIES: 10
   RUST_BACKTRACE: 1
 
@@ -23,7 +22,7 @@ jobs:
       # Need to refine this by specifying components required for doc
       - uses: dtolnay/rust-toolchain@stable
       - name: Generate Rust Docs
-        run: cargo doc --all --no-deps
+        run: cargo +nightly doc --all --all-features --no-deps
 
       - name: Deploy Docs
         uses: peaceiris/actions-gh-pages@v3
