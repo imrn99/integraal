@@ -1,14 +1,40 @@
-//! module doc
+//! main structure and computation code
 
 use crate::parameters::ComputeMethod;
 use crate::{DomainDescriptor, FunctionDescriptor};
 
+/// Integral error
 #[derive(Debug)]
 pub enum IntegraalError {
+    /// One or more parameters are missing.
     MissingParameters(&'static str),
+    /// Specified parameters are conflicting or ambiguous.
     InconsistentParameters(&'static str),
 }
 
+/// Main integral computation structure
+///
+/// This structure is used as the entrypoint for integral definition and computation. It follows
+/// a pseudo-builder patterns where the function description is reset after a computation.
+///
+/// # Usage
+///
+/// ## Components
+///
+/// The structure is made up of three components that are used to describe the integral the user
+/// wishes to compute:
+/// - a [`DomainDescriptor`] instance, used to describe the space over which the integral span
+/// - a [`FunctionDescriptor`] instance, used to describe the integrated function
+/// - a [`ComputeMethod`] instance, used to choose which numerical integration method will be used
+///   for computation
+///
+/// In the future, another object might be included to control the execution backend.
+///
+/// ## Example
+///
+/// ```rust
+/// todo!()
+/// ```
 #[derive(Default)]
 pub struct Integraal<'a> {
     domain: Option<DomainDescriptor<'a>>,
@@ -17,21 +43,35 @@ pub struct Integraal<'a> {
 }
 
 impl<'a> Integraal<'a> {
+    /// Setter
     pub fn domain(mut self, domain_descriptor: DomainDescriptor<'a>) -> Self {
         self.domain = Some(domain_descriptor);
         self
     }
 
+    /// Setter
     pub fn function(mut self, function_descriptor: FunctionDescriptor) -> Self {
         self.function = Some(function_descriptor);
         self
     }
 
+    /// Setter
     pub fn method(mut self, compute_method: ComputeMethod) -> Self {
         self.method = Some(compute_method);
         self
     }
 
+    #[allow(clippy::missing_errors_doc)]
+    /// Main computation method
+    ///
+    /// This method attempts to compute the integral. If it is successful, it will clear the
+    /// internal [`FunctionDescriptor`] object before returning the result.
+    ///
+    /// # Return / Errors
+    ///
+    /// This method returns a `Result` taking the following values:
+    /// - `Ok(f64)` -- The computation was successfuly done
+    /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
     pub fn compute(&mut self) -> Result<f64, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
