@@ -72,7 +72,28 @@ impl<'a> Integraal<'a> {
                     n_step,
                 }),
             ) => {
-                todo!()
+                // compute args
+                match &self.method {
+                    Some(ComputeMethod::Rectangle) => (0..*n_step)
+                        .map(|step_id| {
+                            let x = start + step * step_id as f64;
+                            closure(x) * step
+                        })
+                        .sum(),
+                    Some(ComputeMethod::Trapezoid) => (1..*n_step)
+                        .map(|step_id| {
+                            let x1 = start + step * (step_id - 1) as f64;
+                            let x2 = start + step * step_id as f64;
+                            let y1 = closure(x1);
+                            let y2 = closure(x2);
+                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                        })
+                        .sum(),
+                    Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
+                        todo!()
+                    }
+                    None => unreachable!(),
+                }
             }
             (_, _) => unreachable!(),
         };
