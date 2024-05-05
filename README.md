@@ -13,6 +13,19 @@ Language.
 
 ## Quickstart
 
+You can add Integraal to your project by adding this to its manifest:
+
+```
+# Cargo.toml
+
+[dependencies]
+# other deps...
+integraal = { version = "*" }
+
+```
+
+The Rust Doc is available for usage instructions, examples are provided with the source code / in the repository.
+
 ## Contributing
 
 Contributions are welcome and accepted as pull requests on [GitHub][GH]. Feel free to file an issue to report bugs,
