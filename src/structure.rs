@@ -106,7 +106,7 @@ impl<'a> Integraal<'a> {
                 Some(FunctionDescriptor::Values(vals)),
                 Some(DomainDescriptor::Uniform {
                     start: _,
-                    step,
+                    step: _,
                     n_step,
                 }),
             ) => {
@@ -116,8 +116,8 @@ impl<'a> Integraal<'a> {
                 todo!()
             }
             (
-                Some(FunctionDescriptor::Closure(closure)),
-                Some(DomainDescriptor::Explicit(args)),
+                Some(FunctionDescriptor::Closure(_closure)),
+                Some(DomainDescriptor::Explicit(_args)),
             ) => {
                 todo!()
             }
