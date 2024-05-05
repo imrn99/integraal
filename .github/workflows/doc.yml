@@ -20,7 +20,7 @@ jobs:
         with:
           submodules: recursive
       # Need to refine this by specifying components required for doc
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@nightly
       - name: Generate Rust Docs
         run: cargo +nightly doc --all --all-features --no-deps
 
