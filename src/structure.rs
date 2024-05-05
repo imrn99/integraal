@@ -44,19 +44,19 @@ pub struct Integraal<'a> {
 
 impl<'a> Integraal<'a> {
     /// Setter
-    pub fn domain(mut self, domain_descriptor: DomainDescriptor<'a>) -> Self {
+    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a>) -> &mut Self {
         self.domain = Some(domain_descriptor);
         self
     }
 
     /// Setter
-    pub fn function(mut self, function_descriptor: FunctionDescriptor) -> Self {
+    pub fn function(&mut self, function_descriptor: FunctionDescriptor) -> &mut Self {
         self.function = Some(function_descriptor);
         self
     }
 
     /// Setter
-    pub fn method(mut self, compute_method: ComputeMethod) -> Self {
+    pub fn method(&mut self, compute_method: ComputeMethod) -> &mut Self {
         self.method = Some(compute_method);
         self
     }
