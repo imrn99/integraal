@@ -34,7 +34,7 @@ pub enum IntegraalError {
 ///
 /// ```rust
 /// # use integraal::{DomainDescriptor, ComputeMethod, FunctionDescriptor, Integraal, IntegraalError};
-/// # fn main() -> Result<f64, IntegraalError>{
+/// # fn main() {
 /// // describe domain, function & computation method
 /// let domain = DomainDescriptor::Uniform {
 ///     start: 0.0,
@@ -49,7 +49,7 @@ pub enum IntegraalError {
 /// // build the integral & compute it
 /// let mut integral = Integraal::default();
 /// integral.domain(domain).function(function).method(method);
-/// integral.compute()
+/// assert!(integral.compute().is_ok())
 /// # }
 /// ```
 #[derive(Default)]
