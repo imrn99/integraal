@@ -1,11 +1,30 @@
 # Integraal
 
+![Current Version](https://img.shields.io/crates/v/integraal?label=latest%20release)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/imrn99/integraal/latest)
+![Build Status](https://github.com/imrn99/integraal/actions/workflows/build.yml/badge.svg)
+![Rust Tests](https://github.com/imrn99/integraal/actions/workflows/rust-test.yml/badge.svg)
+[![codecov](https://codecov.io/gh/imrn99/integraal/graph/badge.svg?token=YNIE4B0ZXS)](https://codecov.io/gh/imrn99/integraal)
+
 *Integraal* aims to provide generic and efficient tools for [numerical integration][NI] in the Rust Programming
 Language.
 
 [NI]: https://en.wikipedia.org/wiki/Numerical_integration
 
 ## Quickstart
+
+You can add Integraal to your project by adding this to its manifest:
+
+```
+# Cargo.toml
+
+[dependencies]
+# other deps...
+integraal = { version = "*" }
+
+```
+
+The Rust Doc is available for usage instructions, examples are provided with the source code / in the repository.
 
 ## Contributing
 
