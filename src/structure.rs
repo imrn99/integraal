@@ -33,7 +33,24 @@ pub enum IntegraalError {
 /// ## Example
 ///
 /// ```rust
-/// todo!()
+/// # use integraal::{DomainDescriptor, ComputeMethod, FunctionDescriptor, Integraal, IntegraalError};
+/// # fn main() -> Result<f64, IntegraalError>{
+/// // describe domain, function & computation method
+/// let domain = DomainDescriptor::Uniform {
+///     start: 0.0,
+///     step: 0.00001,
+///     n_step: 100_001,
+/// };
+///
+/// // decribe the function and numerical integration method
+/// let function = FunctionDescriptor::Closure(Box::new(|x: f64| 2.0 * x));
+/// let method = ComputeMethod::Trapezoid;
+///
+/// // build the integral & compute it
+/// let mut integral = Integraal::default();
+/// integral.domain(domain).function(function).method(method);
+/// integral.compute()
+/// # }
 /// ```
 #[derive(Default)]
 pub struct Integraal<'a> {
