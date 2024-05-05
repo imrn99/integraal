@@ -15,6 +15,8 @@
 // more lints
 #![warn(clippy::pedantic)]
 #![warn(missing_docs)]
+// allow some exceptions
+#![allow(clippy::cast_precision_loss)]
 
 // --- MODULES DECLARATION
 
