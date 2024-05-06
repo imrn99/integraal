@@ -92,13 +92,15 @@ impl<'a> Integraal<'a> {
     pub fn compute(&mut self) -> Result<f64, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
-                "cannot compute integral - one or more parameter is missing",
+                "one or more parameter is missing",
             ));
         }
         let res = match (&self.function, &self.domain) {
             (Some(FunctionDescriptor::Values(vals)), Some(DomainDescriptor::Explicit(args))) => {
                 if args.len() != vals.len() {
-                    return Err(IntegraalError::InconsistentParameters("todo"));
+                    return Err(IntegraalError::InconsistentParameters(
+                        "provided function and domain value slices have different lengthes",
+                    ));
                 }
                 todo!()
             }
@@ -111,7 +113,9 @@ impl<'a> Integraal<'a> {
                 }),
             ) => {
                 if *n_step != vals.len() {
-                    return Err(IntegraalError::InconsistentParameters("todo"));
+                    return Err(IntegraalError::InconsistentParameters(
+                        "provided function and domain value slices have different lengthes",
+                    ));
                 }
                 todo!()
             }
