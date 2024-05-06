@@ -102,7 +102,30 @@ impl<'a> Integraal<'a> {
                         "provided function and domain value slices have different lengthes",
                     ));
                 }
-                todo!()
+                let n_sample = args.len();
+
+                // because the domain may be not uniform, we have to compute step values
+                match &self.method {
+                    Some(ComputeMethod::Rectangle) => (1..n_sample)
+                        .map(|idx| {
+                            let step = args[idx] - args[idx - 1];
+                            step * vals[idx - 1]
+                        })
+                        .sum(),
+                    Some(ComputeMethod::Trapezoid) => (1..n_sample)
+                        .map(|idx| {
+                            let step = args[idx] - args[idx - 1];
+                            let y1 = vals[idx - 1];
+                            let y2 = vals[idx];
+                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                        })
+                        .sum(),
+                    #[cfg(feature = "montecarlo")]
+                    Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
+                        todo!()
+                    }
+                    None => unreachable!(),
+                }
             }
             (
                 Some(FunctionDescriptor::Values(vals)),
