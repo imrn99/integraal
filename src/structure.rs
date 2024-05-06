@@ -161,11 +161,29 @@ impl<'a> Integraal<'a> {
                 }
             }
             (
-                Some(FunctionDescriptor::Closure(_closure)),
-                Some(DomainDescriptor::Explicit(_args)),
-            ) => {
-                todo!()
-            }
+                Some(FunctionDescriptor::Closure(closure)),
+                Some(DomainDescriptor::Explicit(args)),
+            ) => match &self.method {
+                Some(ComputeMethod::Rectangle) => (1..args.len())
+                    .map(|idx| {
+                        let step = args[idx] - args[idx - 1];
+                        step * closure(args[idx - 1])
+                    })
+                    .sum(),
+                Some(ComputeMethod::Trapezoid) => (1..args.len())
+                    .map(|idx| {
+                        let step = args[idx] - args[idx - 1];
+                        let y1 = closure(args[idx - 1]);
+                        let y2 = closure(args[idx]);
+                        step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                    })
+                    .sum(),
+                #[cfg(feature = "montecarlo")]
+                Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
+                    todo!()
+                }
+                None => unreachable!(),
+            },
             (
                 Some(FunctionDescriptor::Closure(closure)),
                 Some(DomainDescriptor::Uniform {
