@@ -8,3 +8,8 @@ mod implementations;
 // ------ RE-EXPORTS
 
 pub use definitions::{Integraal, IntegraalError};
+
+// ------ TESTS
+
+#[cfg(test)]
+mod tests;
