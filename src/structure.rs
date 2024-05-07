@@ -78,7 +78,7 @@ impl<'a> Integraal<'a> {
         self
     }
 
-    #[allow(clippy::missing_errors_doc)]
+    #[allow(clippy::missing_errors_doc, clippy::too_many_lines)]
     /// Main computation method
     ///
     /// This method attempts to compute the integral. If it is successful, it will clear the
@@ -92,35 +92,98 @@ impl<'a> Integraal<'a> {
     pub fn compute(&mut self) -> Result<f64, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
-                "cannot compute integral - one or more parameter is missing",
+                "one or more parameter is missing",
             ));
         }
         let res = match (&self.function, &self.domain) {
             (Some(FunctionDescriptor::Values(vals)), Some(DomainDescriptor::Explicit(args))) => {
                 if args.len() != vals.len() {
-                    return Err(IntegraalError::InconsistentParameters("todo"));
+                    return Err(IntegraalError::InconsistentParameters(
+                        "provided function and domain value slices have different lengthes",
+                    ));
                 }
-                todo!()
+                let n_sample = args.len();
+
+                // because the domain may be not uniform, we have to compute step values
+                match &self.method {
+                    Some(ComputeMethod::Rectangle) => (1..n_sample)
+                        .map(|idx| {
+                            let step = args[idx] - args[idx - 1];
+                            step * vals[idx - 1]
+                        })
+                        .sum(),
+                    Some(ComputeMethod::Trapezoid) => (1..n_sample)
+                        .map(|idx| {
+                            let step = args[idx] - args[idx - 1];
+                            let y1 = vals[idx - 1];
+                            let y2 = vals[idx];
+                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                        })
+                        .sum(),
+                    #[cfg(feature = "montecarlo")]
+                    Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
+                        todo!()
+                    }
+                    None => unreachable!(),
+                }
             }
             (
                 Some(FunctionDescriptor::Values(vals)),
                 Some(DomainDescriptor::Uniform {
                     start: _,
-                    step: _,
+                    step,
                     n_step,
                 }),
             ) => {
                 if *n_step != vals.len() {
-                    return Err(IntegraalError::InconsistentParameters("todo"));
+                    return Err(IntegraalError::InconsistentParameters(
+                        "provided function and domain value slices have different lengthes",
+                    ));
                 }
-                todo!()
+
+                // we can use the uniform domain's step & number of step to compute areas
+                match &self.method {
+                    Some(ComputeMethod::Rectangle) => {
+                        (0..*n_step).map(|step_id| vals[step_id] * step).sum()
+                    }
+                    Some(ComputeMethod::Trapezoid) => (1..*n_step)
+                        .map(|step_id| {
+                            let y1 = vals[step_id - 1];
+                            let y2 = vals[step_id];
+                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                        })
+                        .sum(),
+                    #[cfg(feature = "montecarlo")]
+                    Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
+                        todo!()
+                    }
+                    None => unreachable!(),
+                }
             }
             (
-                Some(FunctionDescriptor::Closure(_closure)),
-                Some(DomainDescriptor::Explicit(_args)),
-            ) => {
-                todo!()
-            }
+                Some(FunctionDescriptor::Closure(closure)),
+                Some(DomainDescriptor::Explicit(args)),
+            ) => match &self.method {
+                Some(ComputeMethod::Rectangle) => (1..args.len())
+                    .map(|idx| {
+                        let step = args[idx] - args[idx - 1];
+                        step * closure(args[idx - 1])
+                    })
+                    .sum(),
+                Some(ComputeMethod::Trapezoid) => (1..args.len())
+                    .map(|idx| {
+                        let step = args[idx] - args[idx - 1];
+                        let y1 = closure(args[idx - 1]);
+                        let y2 = closure(args[idx]);
+                        step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                    })
+                    .sum(),
+                #[cfg(feature = "montecarlo")]
+                Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
+                    todo!()
+                }
+                None => unreachable!(),
+            },
             (
                 Some(FunctionDescriptor::Closure(closure)),
                 Some(DomainDescriptor::Uniform {
