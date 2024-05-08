@@ -2,7 +2,7 @@
 
 // ------ IMPORTS
 
-use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal};
+use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError};
 
 // ------ CONTENT
 
@@ -17,12 +17,53 @@ macro_rules! almost_equal {
     };
 }
 
+macro_rules! generate_sample_descriptors {
+    ($f: ident, $d: ident, $c: ident) => {
+        let $f = FunctionDescriptor::Closure(Box::new(|x| x));
+        let $d = DomainDescriptor::Explicit(&[]);
+        let $c = ComputeMethod::Rectangle;
+    };
+}
+
+macro_rules! generate_missing {
+    ($a: ident, $b: ident) => {
+        let mut integral = Integraal::default();
+        integral.$a($a).$b($b);
+        assert_eq!(
+            integral.compute(),
+            Err(IntegraalError::MissingParameters(
+                "one or more parameter is missing"
+            ))
+        );
+    };
+}
+
 // incorrect usages
 
+#[allow(unused_variables)]
 #[test]
-#[should_panic(expected = "a")]
-fn basic() {
-    assert_eq!(1 + 1, 3);
+fn missing_parameters() {
+    // missing function descriptor
+    generate_sample_descriptors!(function, domain, method);
+    generate_missing!(domain, method);
+
+    // missing domain descriptor
+    generate_sample_descriptors!(function, domain, method);
+    generate_missing!(function, method);
+
+    // missing compute method
+    generate_sample_descriptors!(function, domain, method);
+    generate_missing!(function, domain);
+
+    // missing all but one
+    let mut integral = Integraal::default();
+    integral.method(method);
+    assert_eq!(
+        integral.compute(),
+        Err(IntegraalError::MissingParameters(
+            "one or more parameter is missing"
+        ))
+    );
 }
 
 // correct usages
@@ -35,7 +76,7 @@ fn basic() {
 #[allow(non_snake_case)]
 #[test]
 fn A_Closure_Explicit_Rectangle() {
-    let functiond = FunctionDescriptor::Closure(Box::new(|x| x.sin()));
+    let functiond = FunctionDescriptor::Closure(Box::new(f64::sin));
     let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
         .map(|step_id| step_id as f64 * STEP)
         .collect();
@@ -63,6 +104,7 @@ fn A_Closure_Explicit_Rectangle() {
 fn B_Closure_Explicit_Rectangle() {
     let functiond = FunctionDescriptor::Closure(Box::new(|x| x));
     // -1 to 1, with .001 steps
+    // FIXME
     // currently requires one more value because of
     // the inconsistent sampling policy
     let domain: Vec<f64> = (0..=2001)
