@@ -7,7 +7,7 @@ use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor};
 // ------ CONTENT
 
 /// Integral error
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum IntegraalError {
     /// One or more parameters are missing.
     MissingParameters(&'static str),
