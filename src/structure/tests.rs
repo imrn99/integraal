@@ -66,6 +66,40 @@ fn missing_parameters() {
     );
 }
 
+#[test]
+fn inconsistent_parameters() {
+    let method = ComputeMethod::Rectangle;
+    let function = FunctionDescriptor::Values(vec![1., 1., 1., 1., 1., 1.]);
+    let domain = vec![0.0, 0.1, 0.2, 0.3, 0.4]; // missing the last x value
+    let domain = DomainDescriptor::Explicit(&domain);
+
+    let mut integral = Integraal::default();
+    integral.method(method).function(function).domain(domain);
+    assert_eq!(
+        integral.compute(),
+        Err(IntegraalError::InconsistentParameters(
+            "provided function and domain value slices have different lengthes"
+        ))
+    );
+
+    // this is equivalent to the first domain
+    let domain = DomainDescriptor::Uniform {
+        start: 0.,
+        step: 0.1,
+        n_step: 5,
+    };
+    let function = FunctionDescriptor::Values(vec![1., 1., 1., 1., 1., 1.]);
+
+    let mut integral = Integraal::default();
+    integral.method(method).function(function).domain(domain);
+    assert_eq!(
+        integral.compute(),
+        Err(IntegraalError::InconsistentParameters(
+            "provided function and domain value slices have different lengthes"
+        ))
+    );
+}
+
 // correct usages
 // test names follow this pattern:
 // <integral>_<FunctionDescriptorEnum>_<DomainDescriptorEnum>_<ComputeMethodEnum>
