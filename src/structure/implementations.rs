@@ -1,4 +1,4 @@
-//! module doc
+//! main method implementations
 
 // ------ IMPORTS
 
@@ -7,27 +7,25 @@ use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, Inte
 // ------ CONTENT
 
 impl<'a> Integraal<'a> {
-    /// Setter
+    /// Set the domain descriptor.
     pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a>) -> &mut Self {
         self.domain = Some(domain_descriptor);
         self
     }
 
-    /// Setter
+    /// Set the function descriptor.
     pub fn function(&mut self, function_descriptor: FunctionDescriptor) -> &mut Self {
         self.function = Some(function_descriptor);
         self
     }
 
-    /// Setter
+    /// Set the numerical integration method.
     pub fn method(&mut self, compute_method: ComputeMethod) -> &mut Self {
         self.method = Some(compute_method);
         self
     }
 
     #[allow(clippy::missing_errors_doc, clippy::too_many_lines)]
-    /// Main computation method
-    ///
     /// This method attempts to compute the integral. If it is successful, it will clear the
     /// internal [`FunctionDescriptor`] object before returning the result.
     ///

@@ -1,5 +1,4 @@
-//! module doc
-//!
+//! main structure definitions
 
 // ------ IMPORTS
 
