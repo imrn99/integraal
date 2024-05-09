@@ -1,6 +1,6 @@
 ---
 name: Tracker
-about: Use this template to create an issue tracking larger changes
+about: Use this template to create an issue tracking larger changes.
 title: "tracker: title"
 labels: tracker,
 assignees:
