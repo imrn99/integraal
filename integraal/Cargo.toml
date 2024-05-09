@@ -20,13 +20,13 @@ montecarlo = ["dep:rand"]
 # DEPS
 
 [dependencies]
-rand = { version = "0.9.0-alpha.1", features = ["small_rng"], optional = true }
+rand = { workspace = true, features = ["small_rng"], optional = true }
 
 [build-dependencies]
-rustversion = "1.0.15"
+rustversion.workspace = true
 
 [dev-dependencies]
-rand = { version = "0.9.0-alpha.1", features = ["small_rng"] }
+rand = { workspace = true, features = ["small_rng"] }
 
 # EXAMPLES
 
