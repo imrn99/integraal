@@ -101,107 +101,112 @@ fn inconsistent_parameters() {
 }
 
 // correct usages
+// test are groups per module according to the integral & the computation method
 // test names follow this pattern:
-// <integral>_<FunctionDescriptorEnum>_<DomainDescriptorEnum>_<ComputeMethodEnum>
+// <FunctionDescriptorEnum><DomainDescriptorEnum>
 
 // integral A
 // y = f(x) = sin(x) from 0 to PI
 
-#[allow(non_snake_case)]
-#[test]
-fn A_Closure_Explicit_Rectangle() {
-    let functiond = FunctionDescriptor::Closure(Box::new(f64::sin));
-    let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
-        .map(|step_id| step_id as f64 * STEP)
-        .collect();
-    let domaind = DomainDescriptor::Explicit(&domain);
-    let computem = ComputeMethod::Rectangle;
-    let mut integraal = Integraal::default();
-    let res = integraal
-        .function(functiond)
-        .domain(domaind)
-        .method(computem)
-        .compute();
-    assert!(res.is_ok());
-    assert!(
-        almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
-        "left: {} \nright: 2.0",
-        res.unwrap()
-    );
-}
+mod a_rectangle {
+    use super::*;
 
-#[allow(non_snake_case)]
-#[test]
-fn A_Closure_Uniform_Rectangle() {
-    let functiond = FunctionDescriptor::Closure(Box::new(f64::sin));
-    let domaind = DomainDescriptor::Uniform {
-        start: 0.,
-        step: STEP,
-        n_step: (1000. * std::f64::consts::PI) as usize,
-    };
-    let computem = ComputeMethod::Rectangle;
-    let mut integraal = Integraal::default();
-    let res = integraal
-        .function(functiond)
-        .domain(domaind)
-        .method(computem)
-        .compute();
-    assert!(res.is_ok());
-    assert!(
-        almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
-        "left: {} \nright: 2.0",
-        res.unwrap()
-    );
-}
+    #[allow(non_snake_case)]
+    #[test]
+    fn ClosureExplicit() {
+        let functiond = FunctionDescriptor::Closure(Box::new(f64::sin));
+        let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
+            .map(|step_id| step_id as f64 * STEP)
+            .collect();
+        let domaind = DomainDescriptor::Explicit(&domain);
+        let computem = ComputeMethod::Rectangle;
+        let mut integraal = Integraal::default();
+        let res = integraal
+            .function(functiond)
+            .domain(domaind)
+            .method(computem)
+            .compute();
+        assert!(res.is_ok());
+        assert!(
+            almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
+            "left: {} \nright: 2.0",
+            res.unwrap()
+        );
+    }
 
-#[allow(non_snake_case)]
-#[test]
-fn A_Values_Explicit_Rectangle() {
-    let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
-        .map(|step_id| step_id as f64 * STEP)
-        .collect();
-    let functiond = FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect());
-    let domaind = DomainDescriptor::Explicit(&domain);
-    let computem = ComputeMethod::Rectangle;
-    let mut integraal = Integraal::default();
-    let res = integraal
-        .function(functiond)
-        .domain(domaind)
-        .method(computem)
-        .compute();
-    assert!(res.is_ok());
-    assert!(
-        almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
-        "left: {} \nright: 2.0",
-        res.unwrap()
-    );
-}
+    #[allow(non_snake_case)]
+    #[test]
+    fn ClosureUniform() {
+        let functiond = FunctionDescriptor::Closure(Box::new(f64::sin));
+        let domaind = DomainDescriptor::Uniform {
+            start: 0.,
+            step: STEP,
+            n_step: (1000. * std::f64::consts::PI) as usize,
+        };
+        let computem = ComputeMethod::Rectangle;
+        let mut integraal = Integraal::default();
+        let res = integraal
+            .function(functiond)
+            .domain(domaind)
+            .method(computem)
+            .compute();
+        assert!(res.is_ok());
+        assert!(
+            almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
+            "left: {} \nright: 2.0",
+            res.unwrap()
+        );
+    }
 
-#[allow(non_snake_case)]
-#[test]
-fn A_Values_Uniform_Rectangle() {
-    let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
-        .map(|step_id| step_id as f64 * STEP)
-        .collect();
-    let functiond = FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect());
-    let domaind = DomainDescriptor::Uniform {
-        start: 0.,
-        step: STEP,
-        n_step: (1000. * std::f64::consts::PI) as usize,
-    };
-    let computem = ComputeMethod::Rectangle;
-    let mut integraal = Integraal::default();
-    let res = integraal
-        .function(functiond)
-        .domain(domaind)
-        .method(computem)
-        .compute();
-    assert!(res.is_ok());
-    assert!(
-        almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
-        "left: {} \nright: 2.0",
-        res.unwrap()
-    );
+    #[allow(non_snake_case)]
+    #[test]
+    fn ValuesExplicit() {
+        let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
+            .map(|step_id| step_id as f64 * STEP)
+            .collect();
+        let functiond = FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect());
+        let domaind = DomainDescriptor::Explicit(&domain);
+        let computem = ComputeMethod::Rectangle;
+        let mut integraal = Integraal::default();
+        let res = integraal
+            .function(functiond)
+            .domain(domaind)
+            .method(computem)
+            .compute();
+        assert!(res.is_ok());
+        assert!(
+            almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
+            "left: {} \nright: 2.0",
+            res.unwrap()
+        );
+    }
+
+    #[allow(non_snake_case)]
+    #[test]
+    fn ValuesUniform() {
+        let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
+            .map(|step_id| step_id as f64 * STEP)
+            .collect();
+        let functiond = FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect());
+        let domaind = DomainDescriptor::Uniform {
+            start: 0.,
+            step: STEP,
+            n_step: (1000. * std::f64::consts::PI) as usize,
+        };
+        let computem = ComputeMethod::Rectangle;
+        let mut integraal = Integraal::default();
+        let res = integraal
+            .function(functiond)
+            .domain(domaind)
+            .method(computem)
+            .compute();
+        assert!(res.is_ok());
+        assert!(
+            almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
+            "left: {} \nright: 2.0",
+            res.unwrap()
+        );
+    }
 }
 
 // integral B
