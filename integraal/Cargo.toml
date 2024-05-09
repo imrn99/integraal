@@ -27,31 +27,3 @@ rustversion.workspace = true
 
 [dev-dependencies]
 rand = { workspace = true, features = ["small_rng"] }
-
-# EXAMPLES
-
-[[example]]
-name = "rectangle_hardcoded"
-path = "../examples/rectangle/hardcoded.rs"
-
-[[example]]
-name = "rectangle_integraal"
-path = "../examples/rectangle/integraal.rs"
-
-[[example]]
-name = "trapezoid_hardcoded"
-path = "../examples/trapezoid/hardcoded.rs"
-
-[[example]]
-name = "trapezoid_integraal"
-path = "../examples/trapezoid/integraal.rs"
-
-[[example]]
-name = "montecarlo_hardcoded"
-path = "../examples/montecarlo/hardcoded.rs"
-required-features = ["montecarlo"] # not necessary, but enabled for consistency
-
-[[example]]
-name = "montecarlo_integraal"
-path = "../examples/montecarlo/integraal.rs"
-required-features = ["montecarlo"]
