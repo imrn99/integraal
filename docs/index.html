@@ -6,12 +6,21 @@
 
 <h1>integraal</h1>
 
-<h1>scope of the project</h1>
+<h2>scope of the project</h2>
 
 <p>
     Integraal is a Rust crate that aims to provide generic and efficient tools for
     <a href="https://en.wikipedia.org/wiki/Numerical_integration">numerical integration</a>
     in the Rust Programming Language.
+</p><p>
+    The goal is to create a portable tool that handles executing the computational code,
+    relying on information specified by the user for integral description. This can be
+    implemented in an elegant, ergonomic manner thanks to the language's features, most
+    notably traits.
+</p><p>
+    The crate should support multiple numerical integration methods (e.g. rectangles,
+    trapezoids, ...) as well as multiple execution policies (e.g. sequential, parallel
+    on CPU, ...) in order to cover as much use cases as possible.
 </p>
 
 <h2>links</h2>
