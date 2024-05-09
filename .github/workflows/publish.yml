@@ -24,6 +24,6 @@ jobs:
 
       # Publish
       - name: Publish core
-        run: cargo publish --token ${CIO_TOKEN}
+        run: cargo publish --package integraal --token ${CIO_TOKEN}
         env:
           CIO_TOKEN: ${{ secrets.CRATESIO_TOKEN }}

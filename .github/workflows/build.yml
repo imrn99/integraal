@@ -23,8 +23,8 @@ jobs:
           submodules: recursive
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Build crates
-        run: cargo build --all
+      - name: Build main crate
+        run: cargo build -p integraal --all-features
   build_examples:
     name: Build examples for ${{ matrix.os }}
     strategy:
