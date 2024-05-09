@@ -7,6 +7,7 @@
 /// Currently, the supported integration domain can only be one-dimensionnal, described using
 /// `f64` values (i.e. the type used for further computations). In the future, adding support
 /// for higher dimension & generic value type can be considered.
+#[derive(Debug, Clone)]
 pub enum DomainDescriptor<'a> {
     /// List of values taken by the variable on which we integrate.
     Explicit(&'a [f64]),
@@ -35,6 +36,7 @@ pub enum FunctionDescriptor {
 }
 
 /// Numerical integration method enum
+#[derive(Debug, Clone, Copy)]
 pub enum ComputeMethod {
     /// Rectangle method -- [reference](https://en.wikipedia.org/wiki/Riemann_sum)
     Rectangle,
