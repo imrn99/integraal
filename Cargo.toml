@@ -1,0 +1,18 @@
+[workspace]
+
+resolver = "2"
+members = [
+    "integraal",
+]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+homepage = "https://imrn99.github.io/integraal/"
+repository = "https://github.com/imrn99/integraal"
+readme = "README.md"
+description = "Integral computation, done in Rust! "
+categories = ["algorithms", "concurrency", "mathematics", "science"]
+keywords = ["algorithms", "analysis", "integration", "numerical-analysis", "numerical-method"]
+authors = ["Isaie Muron <github@imrn.fr>"]
