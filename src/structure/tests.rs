@@ -108,31 +108,66 @@ fn inconsistent_parameters() {
 // integral A
 // y = f(x) = sin(x) from 0 to PI
 
+macro_rules! generate_test {
+    ($name: ident, $dm: stmt, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
+        #[allow(non_snake_case)]
+        #[test]
+        fn $name() {
+            $dm
+
+            let functiond = $fnd;
+            let domaind = $dmd;
+            let computem = $met;
+            let mut integraal = Integraal::default();
+            let res = integraal
+                .function(functiond)
+                .domain(domaind)
+                .method(computem)
+                .compute();
+            assert!(res.is_ok());
+            assert!(
+                almost_equal!(res.unwrap(), 2.0, $tol),
+                "left: {} \nright: 2.0",
+                res.unwrap()
+            );
+        }
+    };
+    ($name: ident, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
+        #[allow(non_snake_case)]
+        #[test]
+        fn $name() {
+            let functiond = $fnd;
+            let domaind = $dmd;
+            let computem = $met;
+            let mut integraal = Integraal::default();
+            let res = integraal
+                .function(functiond)
+                .domain(domaind)
+                .method(computem)
+                .compute();
+            assert!(res.is_ok());
+            assert!(
+                almost_equal!(res.unwrap(), 2.0, $tol),
+                "left: {} \nright: 2.0",
+                res.unwrap()
+            );
+        }
+    };
+}
+
 mod a_rectangle {
     use super::*;
 
-    #[allow(non_snake_case)]
-    #[test]
-    fn ClosureExplicit() {
-        let functiond = FunctionDescriptor::Closure(Box::new(f64::sin));
+    generate_test!(
+        ClosureExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
-            .collect();
-        let domaind = DomainDescriptor::Explicit(&domain);
-        let computem = ComputeMethod::Rectangle;
-        let mut integraal = Integraal::default();
-        let res = integraal
-            .function(functiond)
-            .domain(domaind)
-            .method(computem)
-            .compute();
-        assert!(res.is_ok());
-        assert!(
-            almost_equal!(res.unwrap(), 2.0, RECTANGLE_TOLERANCE),
-            "left: {} \nright: 2.0",
-            res.unwrap()
-        );
-    }
+            .collect(),
+        FunctionDescriptor::Closure(Box::new(f64::sin)),
+        DomainDescriptor::Explicit(&domain),
+        ComputeMethod::Rectangle,
+        RECTANGLE_TOLERANCE
+    );
 
     #[allow(non_snake_case)]
     #[test]
