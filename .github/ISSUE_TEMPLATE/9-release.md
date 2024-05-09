@@ -1,7 +1,7 @@
 ---
 name: Release
 about: For maintainers.
-title: "rel: <version number>"
+title: "release: <version number>"
 labels: release,
 assignees:
 ---
