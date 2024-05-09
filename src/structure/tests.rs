@@ -102,6 +102,7 @@ fn inconsistent_parameters() {
 }
 
 // correct usages
+
 // test are groups per module according to the integral & the computation method
 // test names follow this pattern:
 // <FunctionDescriptorEnum><DomainDescriptorEnum>
@@ -156,6 +157,7 @@ macro_rules! generate_test {
     };
 }
 
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 mod a_rectangle {
     use super::*;
 
@@ -210,6 +212,7 @@ mod a_rectangle {
     );
 }
 
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 mod a_trapezoid {
     use super::*;
 
@@ -276,7 +279,7 @@ fn B_Closure_Explicit_Rectangle() {
     // currently requires one more value because of
     // the inconsistent sampling policy
     let domain: Vec<f64> = (0..=2001)
-        .map(|step_id| -1. + step_id as f64 * STEP)
+        .map(|step_id| -1. + f64::from(step_id) * STEP)
         .collect();
     let domaind = DomainDescriptor::Explicit(&domain);
     let computem = ComputeMethod::Rectangle;
