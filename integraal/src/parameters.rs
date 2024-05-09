@@ -43,6 +43,9 @@ pub enum ComputeMethod {
     /// Trapezoid method [reference](https://en.wikipedia.org/wiki/Trapezoidal_rule)
     Trapezoid,
     #[cfg(feature = "montecarlo")]
-    /// MonteCarlo method [reference](https://en.wikipedia.org/wiki/Monte_Carlo_integration)
-    MonteCarlo { n_sample: usize },
+    /// Monte-Carlo method [reference](https://en.wikipedia.org/wiki/Monte_Carlo_integration)
+    MonteCarlo {
+        /// Number of random number sample per step computation.
+        n_sample: usize,
+    },
 }

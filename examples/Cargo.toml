@@ -1,0 +1,42 @@
+[package]
+name = "integraal-examples"
+version = "0.0.1"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+homepage = "https://imrn99.github.io/integraal/"
+repository = "https://github.com/imrn99/integraal"
+readme = "../README.md"
+description = "Example of the Integraal crate"
+categories = ["algorithms", "concurrency", "mathematics", "science"]
+keywords = ["algorithms", "analysis", "integration", "numerical-analysis", "numerical-method"]
+authors = ["Isaie Muron <github@imrn.fr>"]
+
+[dependencies]
+integraal = { workspace = true, features = ["montecarlo"] }
+rand = { workspace = true, features = ["small_rng"] }
+
+# EXAMPLES
+
+[[example]]
+name = "rectangle_hardcoded"
+path = "examples/rectangle/hardcoded.rs"
+
+[[example]]
+name = "rectangle_integraal"
+path = "examples/rectangle/integraal.rs"
+
+[[example]]
+name = "trapezoid_hardcoded"
+path = "examples/trapezoid/hardcoded.rs"
+
+[[example]]
+name = "trapezoid_integraal"
+path = "examples/trapezoid/integraal.rs"
+
+[[example]]
+name = "montecarlo_hardcoded"
+path = "examples/montecarlo/hardcoded.rs"
+
+[[example]]
+name = "montecarlo_integraal"
+path = "examples/montecarlo/integraal.rs"
