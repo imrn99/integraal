@@ -55,7 +55,7 @@ pub enum FunctionDescriptor {
 #[derive(Debug, Clone, Copy)]
 pub enum ComputeMethod {
     /// Rectangle method -- [reference](https://en.wikipedia.org/wiki/Riemann_sum)
-    Rectangle,
+    RectangleLeft,
     /// Trapezoid method [reference](https://en.wikipedia.org/wiki/Trapezoidal_rule)
     Trapezoid,
     #[cfg(feature = "montecarlo")]

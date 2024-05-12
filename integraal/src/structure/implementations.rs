@@ -51,7 +51,7 @@ impl<'a> Integraal<'a> {
 
                 // because the domain may be not uniform, we have to compute step values
                 match &self.method {
-                    Some(ComputeMethod::Rectangle) => (1..n_sample)
+                    Some(ComputeMethod::RectangleLeft) => (1..n_sample)
                         .map(|idx| {
                             let step = args[idx] - args[idx - 1];
                             step * vals[idx - 1]
@@ -88,7 +88,7 @@ impl<'a> Integraal<'a> {
 
                 // we can use the uniform domain's step & number of step to compute areas
                 match &self.method {
-                    Some(ComputeMethod::Rectangle) => {
+                    Some(ComputeMethod::RectangleLeft) => {
                         (0..*n_step).map(|step_id| vals[step_id] * step).sum()
                     }
                     Some(ComputeMethod::Trapezoid) => (1..*n_step)
@@ -109,7 +109,7 @@ impl<'a> Integraal<'a> {
                 Some(FunctionDescriptor::Closure(closure)),
                 Some(DomainDescriptor::Explicit(args)),
             ) => match &self.method {
-                Some(ComputeMethod::Rectangle) => (1..args.len())
+                Some(ComputeMethod::RectangleLeft) => (1..args.len())
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
                         step * closure(args[idx - 1])
@@ -139,7 +139,7 @@ impl<'a> Integraal<'a> {
             ) => {
                 // compute args
                 match &self.method {
-                    Some(ComputeMethod::Rectangle) => (0..*n_step)
+                    Some(ComputeMethod::RectangleLeft) => (0..*n_step)
                         .map(|step_id| {
                             let x = start + step * step_id as f64;
                             closure(x) * step

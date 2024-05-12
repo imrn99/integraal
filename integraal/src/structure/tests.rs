@@ -22,7 +22,7 @@ macro_rules! generate_sample_descriptors {
     ($f: ident, $d: ident, $c: ident) => {
         let $f = FunctionDescriptor::Closure(Box::new(|x| x));
         let $d = DomainDescriptor::Explicit(&[]);
-        let $c = ComputeMethod::Rectangle;
+        let $c = ComputeMethod::RectangleLeft;
     };
 }
 
@@ -69,7 +69,7 @@ fn missing_parameters() {
 
 #[test]
 fn inconsistent_parameters() {
-    let method = ComputeMethod::Rectangle;
+    let method = ComputeMethod::RectangleLeft;
     let function = FunctionDescriptor::Values(vec![1., 1., 1., 1., 1., 1.]);
     let domain = vec![0.0, 0.1, 0.2, 0.3, 0.4]; // missing the last x value
     let domain = DomainDescriptor::Explicit(&domain);
@@ -168,7 +168,7 @@ mod a_rectangle {
             .collect(),
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Explicit(&domain),
-        ComputeMethod::Rectangle,
+        ComputeMethod::RectangleLeft,
         RECTANGLE_TOLERANCE
     );
 
@@ -180,7 +180,7 @@ mod a_rectangle {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Rectangle,
+        ComputeMethod::RectangleLeft,
         RECTANGLE_TOLERANCE
     );
 
@@ -191,7 +191,7 @@ mod a_rectangle {
             .collect(),
         FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect()),
         DomainDescriptor::Explicit(&domain),
-        ComputeMethod::Rectangle,
+        ComputeMethod::RectangleLeft,
         RECTANGLE_TOLERANCE
     );
 
@@ -207,7 +207,7 @@ mod a_rectangle {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Rectangle,
+        ComputeMethod::RectangleLeft,
         RECTANGLE_TOLERANCE
     );
 }
@@ -282,7 +282,7 @@ fn B_Closure_Explicit_Rectangle() {
         .map(|step_id| -1. + f64::from(step_id) * STEP)
         .collect();
     let domaind = DomainDescriptor::Explicit(&domain);
-    let computem = ComputeMethod::Rectangle;
+    let computem = ComputeMethod::RectangleLeft;
     let mut integraal = Integraal::default();
     let res = integraal
         .function(functiond)
