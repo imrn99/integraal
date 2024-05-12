@@ -2,7 +2,7 @@
 
 // ------ IMPORTS
 
-use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor};
+use crate::{ComputeMethod, DomainDescriptor, DomainValue, FunctionDescriptor};
 
 // ------ CONTENT
 
@@ -56,8 +56,8 @@ pub enum IntegraalError {
 /// # }
 /// ```
 #[derive(Default)]
-pub struct Integraal<'a> {
-    pub(crate) domain: Option<DomainDescriptor<'a>>,
-    pub(crate) function: Option<FunctionDescriptor>,
+pub struct Integraal<'a, X: DomainValue> {
+    pub(crate) domain: Option<DomainDescriptor<'a, X>>,
+    pub(crate) function: Option<FunctionDescriptor<X>>,
     pub(crate) method: Option<ComputeMethod>,
 }

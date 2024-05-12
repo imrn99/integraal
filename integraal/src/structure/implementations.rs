@@ -2,19 +2,21 @@
 
 // ------ IMPORTS
 
-use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError};
+use crate::{
+    ComputeMethod, DomainDescriptor, DomainValue, FunctionDescriptor, Integraal, IntegraalError,
+};
 
 // ------ CONTENT
 
-impl<'a> Integraal<'a> {
+impl<'a, T: DomainValue> Integraal<'a, T> {
     /// Set the domain descriptor.
-    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a>) -> &mut Self {
+    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a, T>) -> &mut Self {
         self.domain = Some(domain_descriptor);
         self
     }
 
     /// Set the function descriptor.
-    pub fn function(&mut self, function_descriptor: FunctionDescriptor) -> &mut Self {
+    pub fn function(&mut self, function_descriptor: FunctionDescriptor<T>) -> &mut Self {
         self.function = Some(function_descriptor);
         self
     }
