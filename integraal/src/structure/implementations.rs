@@ -57,6 +57,12 @@ impl<'a> Integraal<'a> {
                             step * vals[idx - 1]
                         })
                         .sum(),
+                    Some(ComputeMethod::RectangleRight) => (1..n_sample)
+                        .map(|idx| {
+                            let step = args[idx] - args[idx - 1];
+                            step * vals[idx]
+                        })
+                        .sum(),
                     Some(ComputeMethod::Trapezoid) => (1..n_sample)
                         .map(|idx| {
                             let step = args[idx] - args[idx - 1];
@@ -89,7 +95,12 @@ impl<'a> Integraal<'a> {
                 // we can use the uniform domain's step & number of step to compute areas
                 match &self.method {
                     Some(ComputeMethod::RectangleLeft) => {
-                        (0..*n_step).map(|step_id| vals[step_id] * step).sum()
+                        // ignore the last value since its a left rule
+                        (0..*n_step - 1).map(|step_id| vals[step_id] * step).sum()
+                    }
+                    Some(ComputeMethod::RectangleRight) => {
+                        // ignore the last value since its a left rule
+                        (1..*n_step).map(|step_id| vals[step_id] * step).sum()
                     }
                     Some(ComputeMethod::Trapezoid) => (1..*n_step)
                         .map(|step_id| {
@@ -113,6 +124,12 @@ impl<'a> Integraal<'a> {
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
                         step * closure(args[idx - 1])
+                    })
+                    .sum(),
+                Some(ComputeMethod::RectangleRight) => (1..args.len())
+                    .map(|idx| {
+                        let step = args[idx] - args[idx - 1];
+                        step * closure(args[idx])
                     })
                     .sum(),
                 Some(ComputeMethod::Trapezoid) => (1..args.len())
@@ -139,7 +156,13 @@ impl<'a> Integraal<'a> {
             ) => {
                 // compute args
                 match &self.method {
-                    Some(ComputeMethod::RectangleLeft) => (0..*n_step)
+                    Some(ComputeMethod::RectangleLeft) => (0..*n_step - 1)
+                        .map(|step_id| {
+                            let x = start + step * step_id as f64;
+                            closure(x) * step
+                        })
+                        .sum(),
+                    Some(ComputeMethod::RectangleRight) => (1..*n_step)
                         .map(|step_id| {
                             let x = start + step * step_id as f64;
                             closure(x) * step
