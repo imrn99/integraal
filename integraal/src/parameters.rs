@@ -54,8 +54,12 @@ pub enum FunctionDescriptor {
 /// using rectangles.
 #[derive(Debug, Clone, Copy)]
 pub enum ComputeMethod {
-    /// Rectangle method -- [reference](https://en.wikipedia.org/wiki/Riemann_sum)
+    /// Rectangle method, using the left rule --
+    /// [reference](https://en.wikipedia.org/wiki/Riemann_sum#Left_rule)
     RectangleLeft,
+    /// Rectangle method, using the right rule --
+    /// [reference](https://en.wikipedia.org/wiki/Riemann_sum#Right_rule)
+    RectangleRight,
     /// Trapezoid method [reference](https://en.wikipedia.org/wiki/Trapezoidal_rule)
     Trapezoid,
     #[cfg(feature = "montecarlo")]
