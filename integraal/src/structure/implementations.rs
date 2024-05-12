@@ -2,21 +2,23 @@
 
 // ------ IMPORTS
 
+use crate::traits::IntegratedValue;
 use crate::{
-    ComputeMethod, DomainDescriptor, DomainValue, FunctionDescriptor, Integraal, IntegraalError,
+    ComputeMethod, DomainDescriptor, DomainValue, FunctionDescriptor, ImageValue, Integraal,
+    IntegraalError,
 };
 
 // ------ CONTENT
 
-impl<'a, T: DomainValue> Integraal<'a, T> {
+impl<'a, X: DomainValue, Y: ImageValue<X, W>, W: IntegratedValue> Integraal<'a, X, Y, W> {
     /// Set the domain descriptor.
-    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a, T>) -> &mut Self {
+    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a, X>) -> &mut Self {
         self.domain = Some(domain_descriptor);
         self
     }
 
     /// Set the function descriptor.
-    pub fn function(&mut self, function_descriptor: FunctionDescriptor<T>) -> &mut Self {
+    pub fn function(&mut self, function_descriptor: FunctionDescriptor<X, Y, W>) -> &mut Self {
         self.function = Some(function_descriptor);
         self
     }
@@ -36,7 +38,7 @@ impl<'a, T: DomainValue> Integraal<'a, T> {
     /// This method returns a `Result` taking the following values:
     /// - `Ok(f64)` -- The computation was successfuly done
     /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
-    pub fn compute(&mut self) -> Result<f64, IntegraalError> {
+    pub fn compute(&mut self) -> Result<W, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
                 "one or more parameter is missing",
@@ -56,13 +58,13 @@ impl<'a, T: DomainValue> Integraal<'a, T> {
                     Some(ComputeMethod::RectangleLeft) => (1..n_sample)
                         .map(|idx| {
                             let step = args[idx] - args[idx - 1];
-                            step * vals[idx - 1]
+                            vals[idx - 1] * step
                         })
                         .sum(),
                     Some(ComputeMethod::RectangleRight) => (1..n_sample)
                         .map(|idx| {
                             let step = args[idx] - args[idx - 1];
-                            step * vals[idx]
+                            vals[idx] * step
                         })
                         .sum(),
                     Some(ComputeMethod::Trapezoid) => (1..n_sample)
@@ -108,7 +110,7 @@ impl<'a, T: DomainValue> Integraal<'a, T> {
                         .map(|step_id| {
                             let y1 = vals[step_id - 1];
                             let y2 = vals[step_id];
-                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                            (y1.min(y2) + (y1 - y2).abs() / 2.0) * step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]
@@ -125,13 +127,13 @@ impl<'a, T: DomainValue> Integraal<'a, T> {
                 Some(ComputeMethod::RectangleLeft) => (1..args.len())
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
-                        step * closure(args[idx - 1])
+                        closure(args[idx - 1]) * step
                     })
                     .sum(),
                 Some(ComputeMethod::RectangleRight) => (1..args.len())
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
-                        step * closure(args[idx])
+                        closure(args[idx]) * step
                     })
                     .sum(),
                 Some(ComputeMethod::Trapezoid) => (1..args.len())
@@ -139,7 +141,7 @@ impl<'a, T: DomainValue> Integraal<'a, T> {
                         let step = args[idx] - args[idx - 1];
                         let y1 = closure(args[idx - 1]);
                         let y2 = closure(args[idx]);
-                        step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                        (y1.min(y2) + (y1 - y2).abs() / 2.0) * step
                     })
                     .sum(),
                 #[cfg(feature = "montecarlo")]
@@ -160,23 +162,23 @@ impl<'a, T: DomainValue> Integraal<'a, T> {
                 match &self.method {
                     Some(ComputeMethod::RectangleLeft) => (0..*n_step - 1)
                         .map(|step_id| {
-                            let x = start + step * step_id as f64;
+                            let x = start + step * step_id;
                             closure(x) * step
                         })
                         .sum(),
                     Some(ComputeMethod::RectangleRight) => (1..*n_step)
                         .map(|step_id| {
-                            let x = start + step * step_id as f64;
+                            let x = start + step * step_id;
                             closure(x) * step
                         })
                         .sum(),
                     Some(ComputeMethod::Trapezoid) => (1..*n_step)
                         .map(|step_id| {
-                            let x1 = start + step * (step_id - 1) as f64;
-                            let x2 = start + step * step_id as f64;
+                            let x1 = start + step * (step_id - 1);
+                            let x2 = start + step * step_id;
                             let y1 = closure(x1);
                             let y2 = closure(x2);
-                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                            (y1.min(y2) + (y1 - y2).abs() / 2.0) * step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]

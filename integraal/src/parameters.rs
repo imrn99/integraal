@@ -1,6 +1,7 @@
 //! integral parameterization code
 
-use crate::DomainValue;
+use crate::traits::IntegratedValue;
+use crate::{DomainValue, ImageValue};
 
 /// Domain description enum
 ///
@@ -28,13 +29,20 @@ pub enum DomainDescriptor<'a, T: DomainValue> {
 ///
 /// This enum is used to provide either the values taken by the function or describe of to compute
 /// those.
-pub enum FunctionDescriptor<T: DomainValue> {
+pub enum FunctionDescriptor<X, Y, W>
+where
+    X: DomainValue,
+    Y: ImageValue<X, W>,
+    W: IntegratedValue,
+{
     /// Direct expression of the function, taking a value of the domain as input & returning the
     /// image of that value through the function.
-    Closure(Box<dyn Fn(T) -> f64>),
+    Closure(Box<dyn Fn(X) -> Y>),
     /// List of values taken by the function. The coherence with the domain description must
     /// be ensured by the user in this case.
-    Values(Vec<f64>),
+    Values(Vec<Y>),
+    /// INVALID VARIANT.
+    Invalid(std::marker::PhantomData<W>),
 }
 
 /// Numerical integration method enum
