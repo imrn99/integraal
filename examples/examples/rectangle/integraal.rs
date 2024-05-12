@@ -8,7 +8,7 @@ fn main() {
         n_step: 100_001,
     };
     let function = FunctionDescriptor::Closure(Box::new(|x: f64| 2.0 * x));
-    let method = ComputeMethod::Rectangle;
+    let method = ComputeMethod::RectangleLeft;
 
     // build the integral
     let mut integral = Integraal::default();

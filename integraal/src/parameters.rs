@@ -36,10 +36,30 @@ pub enum FunctionDescriptor {
 }
 
 /// Numerical integration method enum
+///
+/// # Note on computations
+///
+/// For the considered integral to be consistent across compute methods for a given description,
+/// the left-rectangle (resp. right-rectangle) has to ignore the last (resp. first) value given
+/// in the descriptors. This can be visualized in the following example:
+///
+/// ![COMPARISON](../compute_methods.svg)
+///
+/// Out of 11 samples, both methods compute the area of 10 polygons. In the case where the domain
+/// is uniform & described using a step, the eleventh sample value is useless (for a left-rectangle
+/// method).
+///
+/// The crate assumes that the first and last samples making up your domain corresponds to the
+/// limits of the integral. Therefore, these values will be ignored when computing the integral
+/// using rectangles.
 #[derive(Debug, Clone, Copy)]
 pub enum ComputeMethod {
-    /// Rectangle method -- [reference](https://en.wikipedia.org/wiki/Riemann_sum)
-    Rectangle,
+    /// Rectangle method, using the left rule --
+    /// [reference](https://en.wikipedia.org/wiki/Riemann_sum#Left_rule)
+    RectangleLeft,
+    /// Rectangle method, using the right rule --
+    /// [reference](https://en.wikipedia.org/wiki/Riemann_sum#Right_rule)
+    RectangleRight,
     /// Trapezoid method [reference](https://en.wikipedia.org/wiki/Trapezoidal_rule)
     Trapezoid,
     #[cfg(feature = "montecarlo")]
