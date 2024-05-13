@@ -37,3 +37,5 @@ impl<
 }
 
 pub trait IntegratedScalar: Clone + Copy + std::iter::Sum {}
+
+impl<W: Clone + Copy + std::iter::Sum> IntegratedScalar for W {}
