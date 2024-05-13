@@ -2,8 +2,8 @@
 
 // ------ IMPORTS
 
-use crate::traits::IntegratedValue;
-use crate::{ComputeMethod, DomainDescriptor, DomainValue, FunctionDescriptor, ImageValue};
+use crate::traits::IntegratedScalar;
+use crate::{ComputeMethod, DomainDescriptor, DomainScalar, FunctionDescriptor, ImageScalar};
 
 // ------ CONTENT
 
@@ -57,7 +57,7 @@ pub enum IntegraalError {
 /// # }
 /// ```
 #[derive(Default)]
-pub struct Integraal<'a, X: DomainValue, Y: ImageValue<X, W>, W: IntegratedValue> {
+pub struct Integraal<'a, X: DomainScalar, Y: ImageScalar<X, W>, W: IntegratedScalar> {
     pub(crate) domain: Option<DomainDescriptor<'a, X>>,
     pub(crate) function: Option<FunctionDescriptor<X, Y, W>>,
     pub(crate) method: Option<ComputeMethod>,

@@ -28,4 +28,4 @@ mod traits;
 
 pub use parameters::{ComputeMethod, DomainDescriptor, FunctionDescriptor};
 pub use structure::{Integraal, IntegraalError};
-pub use traits::{DomainValue, ImageValue};
+pub use traits::{DomainScalar, ImageScalar};
