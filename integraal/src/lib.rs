@@ -22,8 +22,10 @@
 
 mod parameters;
 mod structure;
+mod traits;
 
 // --- RE-EXPORTS
 
 pub use parameters::{ComputeMethod, DomainDescriptor, FunctionDescriptor};
 pub use structure::{Integraal, IntegraalError};
+pub use traits::Scalar;

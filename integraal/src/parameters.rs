@@ -1,5 +1,7 @@
 //! integral parameterization code
 
+use crate::Scalar;
+
 /// Domain description enum
 ///
 /// This is essentially a discretization of the integrated space.
@@ -8,15 +10,15 @@
 /// `f64` values (i.e. the type used for further computations). In the future, adding support
 /// for higher dimension & generic value type can be considered.
 #[derive(Debug, Clone)]
-pub enum DomainDescriptor<'a> {
+pub enum DomainDescriptor<'a, T: Scalar> {
     /// List of values taken by the variable on which we integrate.
-    Explicit(&'a [f64]),
+    Explicit(&'a [T]),
     /// Description of a uniform discretization over a certain range of values.
     Uniform {
         /// First value of the range
-        start: f64,
+        start: T,
         /// Step between each value of the range
-        step: f64,
+        step: T,
         /// Total number of values
         n_step: usize,
     },
@@ -26,13 +28,16 @@ pub enum DomainDescriptor<'a> {
 ///
 /// This enum is used to provide either the values taken by the function or describe of to compute
 /// those.
-pub enum FunctionDescriptor {
+pub enum FunctionDescriptor<X>
+where
+    X: Scalar,
+{
     /// Direct expression of the function, taking a value of the domain as input & returning the
     /// image of that value through the function.
-    Closure(Box<dyn Fn(f64) -> f64>),
+    Closure(Box<dyn Fn(X) -> X>),
     /// List of values taken by the function. The coherence with the domain description must
     /// be ensured by the user in this case.
-    Values(Vec<f64>),
+    Values(Vec<X>),
 }
 
 /// Numerical integration method enum

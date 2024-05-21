@@ -2,19 +2,23 @@
 
 // ------ IMPORTS
 
-use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError};
+use crate::{
+    ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
+};
+use num::abs;
+use std::ops::Deref;
 
 // ------ CONTENT
 
-impl<'a> Integraal<'a> {
+impl<'a, X: Scalar> Integraal<'a, X> {
     /// Set the domain descriptor.
-    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a>) -> &mut Self {
+    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a, X>) -> &mut Self {
         self.domain = Some(domain_descriptor);
         self
     }
 
     /// Set the function descriptor.
-    pub fn function(&mut self, function_descriptor: FunctionDescriptor) -> &mut Self {
+    pub fn function(&mut self, function_descriptor: FunctionDescriptor<X>) -> &mut Self {
         self.function = Some(function_descriptor);
         self
     }
@@ -25,7 +29,11 @@ impl<'a> Integraal<'a> {
         self
     }
 
-    #[allow(clippy::missing_errors_doc, clippy::too_many_lines)]
+    #[allow(
+        clippy::missing_errors_doc,
+        clippy::missing_panics_doc,
+        clippy::too_many_lines
+    )]
     /// This method attempts to compute the integral. If it is successful, it will clear the
     /// internal [`FunctionDescriptor`] object before returning the result.
     ///
@@ -34,7 +42,7 @@ impl<'a> Integraal<'a> {
     /// This method returns a `Result` taking the following values:
     /// - `Ok(f64)` -- The computation was successfuly done
     /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
-    pub fn compute(&mut self) -> Result<f64, IntegraalError> {
+    pub fn compute(&mut self) -> Result<X, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
                 "one or more parameter is missing",
@@ -54,13 +62,13 @@ impl<'a> Integraal<'a> {
                     Some(ComputeMethod::RectangleLeft) => (1..n_sample)
                         .map(|idx| {
                             let step = args[idx] - args[idx - 1];
-                            step * vals[idx - 1]
+                            vals[idx - 1] * step
                         })
                         .sum(),
                     Some(ComputeMethod::RectangleRight) => (1..n_sample)
                         .map(|idx| {
                             let step = args[idx] - args[idx - 1];
-                            step * vals[idx]
+                            vals[idx] * step
                         })
                         .sum(),
                     Some(ComputeMethod::Trapezoid) => (1..n_sample)
@@ -68,7 +76,7 @@ impl<'a> Integraal<'a> {
                             let step = args[idx] - args[idx - 1];
                             let y1 = vals[idx - 1];
                             let y2 = vals[idx];
-                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                            (y1.min(y2) + abs(y1 - y2) / X::from_f32(2.0).unwrap()) * step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]
@@ -96,17 +104,17 @@ impl<'a> Integraal<'a> {
                 match &self.method {
                     Some(ComputeMethod::RectangleLeft) => {
                         // ignore the last value since its a left rule
-                        (0..*n_step - 1).map(|step_id| vals[step_id] * step).sum()
+                        (0..*n_step - 1).map(|step_id| vals[step_id] * *step).sum()
                     }
                     Some(ComputeMethod::RectangleRight) => {
                         // ignore the last value since its a left rule
-                        (1..*n_step).map(|step_id| vals[step_id] * step).sum()
+                        (1..*n_step).map(|step_id| vals[step_id] * *step).sum()
                     }
                     Some(ComputeMethod::Trapezoid) => (1..*n_step)
                         .map(|step_id| {
                             let y1 = vals[step_id - 1];
                             let y2 = vals[step_id];
-                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                            (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]
@@ -123,21 +131,21 @@ impl<'a> Integraal<'a> {
                 Some(ComputeMethod::RectangleLeft) => (1..args.len())
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
-                        step * closure(args[idx - 1])
+                        closure(args[idx - 1]) * step
                     })
                     .sum(),
                 Some(ComputeMethod::RectangleRight) => (1..args.len())
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
-                        step * closure(args[idx])
+                        closure(args[idx]) * step
                     })
                     .sum(),
                 Some(ComputeMethod::Trapezoid) => (1..args.len())
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
-                        let y1 = closure(args[idx - 1]);
+                        let y1 = closure.deref()(args[idx - 1]);
                         let y2 = closure(args[idx]);
-                        step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                        (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * step
                     })
                     .sum(),
                 #[cfg(feature = "montecarlo")]
@@ -158,23 +166,23 @@ impl<'a> Integraal<'a> {
                 match &self.method {
                     Some(ComputeMethod::RectangleLeft) => (0..*n_step - 1)
                         .map(|step_id| {
-                            let x = start + step * step_id as f64;
-                            closure(x) * step
+                            let x = *start + *step * X::from_usize(step_id).unwrap();
+                            closure(x) * *step
                         })
                         .sum(),
                     Some(ComputeMethod::RectangleRight) => (1..*n_step)
                         .map(|step_id| {
-                            let x = start + step * step_id as f64;
-                            closure(x) * step
+                            let x = *start + *step * X::from_usize(step_id).unwrap();
+                            closure(x) * *step
                         })
                         .sum(),
                     Some(ComputeMethod::Trapezoid) => (1..*n_step)
                         .map(|step_id| {
-                            let x1 = start + step * (step_id - 1) as f64;
-                            let x2 = start + step * step_id as f64;
-                            let y1 = closure(x1);
+                            let x1 = *start + *step * X::from_usize(step_id - 1).unwrap();
+                            let x2 = *start + *step * X::from_usize(step_id).unwrap();
+                            let y1 = closure.deref()(x1);
                             let y2 = closure(x2);
-                            step * (y1.min(y2) + (y1 - y2).abs() / 2.0)
+                            (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]
