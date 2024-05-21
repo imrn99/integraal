@@ -1,7 +1,6 @@
 //! integral parameterization code
 
-use crate::traits::IntegratedScalar;
-use crate::{ImageScalar, Scalar};
+use crate::Scalar;
 
 /// Domain description enum
 ///
@@ -29,20 +28,16 @@ pub enum DomainDescriptor<'a, T: Scalar> {
 ///
 /// This enum is used to provide either the values taken by the function or describe of to compute
 /// those.
-pub enum FunctionDescriptor<X, Y, W>
+pub enum FunctionDescriptor<X>
 where
     X: Scalar,
-    Y: ImageScalar<X, W>,
-    W: IntegratedScalar,
 {
     /// Direct expression of the function, taking a value of the domain as input & returning the
     /// image of that value through the function.
-    Closure(Box<dyn Fn(X) -> Y>),
+    Closure(Box<dyn Fn(X) -> X>),
     /// List of values taken by the function. The coherence with the domain description must
     /// be ensured by the user in this case.
-    Values(Vec<Y>),
-    /// INVALID VARIANT.
-    Invalid(std::marker::PhantomData<W>),
+    Values(Vec<X>),
 }
 
 /// Numerical integration method enum

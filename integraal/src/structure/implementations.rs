@@ -2,16 +2,14 @@
 
 // ------ IMPORTS
 
-use crate::traits::IntegratedScalar;
 use crate::{
-    ComputeMethod, DomainDescriptor, FunctionDescriptor, ImageScalar, Integraal, IntegraalError,
-    Scalar,
+    ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
 };
 use num::abs;
 
 // ------ CONTENT
 
-impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, Y, W> {
+impl<'a, X: Scalar> Integraal<'a, X> {
     /// Set the domain descriptor.
     pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a, X>) -> &mut Self {
         self.domain = Some(domain_descriptor);
@@ -19,7 +17,7 @@ impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, 
     }
 
     /// Set the function descriptor.
-    pub fn function(&mut self, function_descriptor: FunctionDescriptor<X, Y, W>) -> &mut Self {
+    pub fn function(&mut self, function_descriptor: FunctionDescriptor<X>) -> &mut Self {
         self.function = Some(function_descriptor);
         self
     }
@@ -39,7 +37,7 @@ impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, 
     /// This method returns a `Result` taking the following values:
     /// - `Ok(f64)` -- The computation was successfuly done
     /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
-    pub fn compute(&mut self) -> Result<W, IntegraalError> {
+    pub fn compute(&mut self) -> Result<X, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
                 "one or more parameter is missing",
@@ -73,7 +71,7 @@ impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, 
                             let step = args[idx] - args[idx - 1];
                             let y1 = vals[idx - 1];
                             let y2 = vals[idx];
-                            (y1.min(y2) + abs(y1 - y2) / Y::from_f32(2.0).unwrap()) * step
+                            (y1.min(y2) + abs(y1 - y2) / X::from_f32(2.0).unwrap()) * step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]
@@ -111,7 +109,7 @@ impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, 
                         .map(|step_id| {
                             let y1 = vals[step_id - 1];
                             let y2 = vals[step_id];
-                            (y1.min(y2) + (y1 - y2).abs() / Y::from_f32(2.0).unwrap()) * *step
+                            (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]
@@ -142,7 +140,7 @@ impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, 
                         let step = args[idx] - args[idx - 1];
                         let y1 = closure.clone()(args[idx - 1]);
                         let y2 = closure(args[idx]);
-                        (y1.min(y2) + (y1 - y2).abs() / Y::from_f32(2.0).unwrap()) * step
+                        (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * step
                     })
                     .sum(),
                 #[cfg(feature = "montecarlo")]
@@ -179,7 +177,7 @@ impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, 
                             let x2 = *start + *step * X::from_usize(step_id).unwrap();
                             let y1 = closure.clone()(x1);
                             let y2 = closure(x2);
-                            (y1.min(y2) + (y1 - y2).abs() / Y::from_f32(2.0).unwrap()) * *step
+                            (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]

@@ -20,7 +20,7 @@ macro_rules! almost_equal {
 
 macro_rules! generate_sample_descriptors {
     ($f: ident, $d: ident, $c: ident) => {
-        let $f: FunctionDescriptor<f64, f64, f64> = FunctionDescriptor::Closure(Box::new(|x| x));
+        let $f: FunctionDescriptor<f64> = FunctionDescriptor::Closure(Box::new(|x| x));
         let $d: DomainDescriptor<'_, f64> = DomainDescriptor::Explicit(&[]);
         let $c: ComputeMethod = ComputeMethod::RectangleLeft;
     };
@@ -28,7 +28,7 @@ macro_rules! generate_sample_descriptors {
 
 macro_rules! generate_missing {
     ($a: ident, $b: ident) => {
-        let mut integral: Integraal<'_, f64, f64, f64> = Integraal::default();
+        let mut integral: Integraal<'_, f64> = Integraal::default();
         integral.$a($a).$b($b);
         assert_eq!(
             integral.compute(),
@@ -57,7 +57,7 @@ fn missing_parameters() {
     generate_missing!(function, domain);
 
     // missing all but one
-    let mut integral: Integraal<'_, f64, f64, f64> = Integraal::default();
+    let mut integral: Integraal<'_, f64> = Integraal::default();
     integral.method(method);
     assert_eq!(
         integral.compute(),

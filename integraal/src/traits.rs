@@ -1,6 +1,6 @@
 //! module doc
 
-/// Scalar domain value trait.
+/// Scalar value trait.
 ///
 /// This trait is automatically implemented for all types implementing its requirements.
 pub trait Scalar:
