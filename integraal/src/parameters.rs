@@ -1,7 +1,7 @@
 //! integral parameterization code
 
 use crate::traits::IntegratedScalar;
-use crate::{DomainScalar, ImageScalar};
+use crate::{ImageScalar, Scalar};
 
 /// Domain description enum
 ///
@@ -11,7 +11,7 @@ use crate::{DomainScalar, ImageScalar};
 /// `f64` values (i.e. the type used for further computations). In the future, adding support
 /// for higher dimension & generic value type can be considered.
 #[derive(Debug, Clone)]
-pub enum DomainDescriptor<'a, T: DomainScalar> {
+pub enum DomainDescriptor<'a, T: Scalar> {
     /// List of values taken by the variable on which we integrate.
     Explicit(&'a [T]),
     /// Description of a uniform discretization over a certain range of values.
@@ -31,7 +31,7 @@ pub enum DomainDescriptor<'a, T: DomainScalar> {
 /// those.
 pub enum FunctionDescriptor<X, Y, W>
 where
-    X: DomainScalar,
+    X: Scalar,
     Y: ImageScalar<X, W>,
     W: IntegratedScalar,
 {

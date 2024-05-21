@@ -4,14 +4,14 @@
 
 use crate::traits::IntegratedScalar;
 use crate::{
-    ComputeMethod, DomainDescriptor, DomainScalar, FunctionDescriptor, ImageScalar, Integraal,
-    IntegraalError,
+    ComputeMethod, DomainDescriptor, FunctionDescriptor, ImageScalar, Integraal, IntegraalError,
+    Scalar,
 };
 use num::abs;
 
 // ------ CONTENT
 
-impl<'a, X: DomainScalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, Y, W> {
+impl<'a, X: Scalar, Y: ImageScalar<X, W>, W: IntegratedScalar> Integraal<'a, X, Y, W> {
     /// Set the domain descriptor.
     pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a, X>) -> &mut Self {
         self.domain = Some(domain_descriptor);
