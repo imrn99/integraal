@@ -6,6 +6,7 @@ use crate::{
     ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
 };
 use num::abs;
+use std::ops::Deref;
 
 // ------ CONTENT
 
@@ -28,7 +29,11 @@ impl<'a, X: Scalar> Integraal<'a, X> {
         self
     }
 
-    #[allow(clippy::missing_errors_doc, clippy::too_many_lines)]
+    #[allow(
+        clippy::missing_errors_doc,
+        clippy::missing_panics_doc,
+        clippy::too_many_lines
+    )]
     /// This method attempts to compute the integral. If it is successful, it will clear the
     /// internal [`FunctionDescriptor`] object before returning the result.
     ///
@@ -138,7 +143,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
                 Some(ComputeMethod::Trapezoid) => (1..args.len())
                     .map(|idx| {
                         let step = args[idx] - args[idx - 1];
-                        let y1 = closure.clone()(args[idx - 1]);
+                        let y1 = closure.deref()(args[idx - 1]);
                         let y2 = closure(args[idx]);
                         (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * step
                     })
@@ -175,7 +180,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
                         .map(|step_id| {
                             let x1 = *start + *step * X::from_usize(step_id - 1).unwrap();
                             let x2 = *start + *step * X::from_usize(step_id).unwrap();
-                            let y1 = closure.clone()(x1);
+                            let y1 = closure.deref()(x1);
                             let y2 = closure(x2);
                             (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
                         })
