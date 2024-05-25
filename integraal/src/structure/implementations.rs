@@ -197,4 +197,27 @@ impl<'a, X: Scalar> Integraal<'a, X> {
         self.function = None;
         Ok(res)
     }
+
+    #[allow(
+        clippy::missing_errors_doc,
+        clippy::missing_panics_doc,
+        clippy::too_many_lines
+    )]
+    /// This method attempts to compute the numerical error one can expect from the approximation.
+    ///
+    /// TODO: add ref to error formulae
+    ///
+    /// # Return / Errors
+    ///
+    /// This method returns a `Result` taking the following values:
+    /// - `Ok(X: Scalar)` -- The computation was successfuly done
+    /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
+    pub fn compute_error(&mut self) -> Result<X, IntegraalError> {
+        if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
+            return Err(IntegraalError::MissingParameters(
+                "one or more parameter is missing",
+            ));
+        }
+        todo!()
+    }
 }
