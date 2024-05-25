@@ -218,6 +218,31 @@ impl<'a, X: Scalar> Integraal<'a, X> {
                 "one or more parameter is missing",
             ));
         }
-        todo!()
+        if let Some(DomainDescriptor::Uniform {
+            start,
+            step,
+            n_step,
+        }) = self.domain
+        {
+            // ref: https://en.wikipedia.org/wiki/Riemann_sum#Riemann_summation_methods
+            let res = match self.method {
+                Some(ComputeMethod::RectangleLeft) | Some(ComputeMethod::RectangleRight) => {
+                    todo!()
+                }
+                Some(ComputeMethod::Trapezoid) => {
+                    todo!()
+                }
+                #[cfg(feature = "montecarlo")]
+                Some(ComputeMethod::MonteCarlo { .. }) => {
+                    todo!()
+                }
+                None => unreachable!(),
+            };
+            Ok(res)
+        } else {
+            Err(IntegraalError::InconsistentParameters(
+                "numerical error computation in not supported for non-uniform domains",
+            ))
+        }
     }
 }
