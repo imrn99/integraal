@@ -225,12 +225,45 @@ impl<'a, X: Scalar> Integraal<'a, X> {
         }) = self.domain
         {
             // ref: https://en.wikipedia.org/wiki/Riemann_sum#Riemann_summation_methods
-            let res = match self.method {
-                Some(ComputeMethod::RectangleLeft) | Some(ComputeMethod::RectangleRight) => {
-                    todo!()
+            let res: X = match self.method {
+                Some(ComputeMethod::RectangleLeft | ComputeMethod::RectangleRight) => {
+                    let m1: X = (1..n_step)
+                        .map(|step_id| match &self.function {
+                            Some(FunctionDescriptor::Closure(f)) => {
+                                (f(start + step * X::from_usize(step_id).unwrap())
+                                    - f(start + step * X::from_usize(step_id - 1).unwrap()))
+                                    / step
+                            }
+                            Some(FunctionDescriptor::Values(v)) => {
+                                (v[step_id] - v[step_id - 1]) / step
+                            }
+                            None => unreachable!(),
+                        })
+                        .max_by(|t1, t2| t1.partial_cmp(t2).unwrap())
+                        .unwrap();
+                    let end = start + step * X::from_usize(n_step).unwrap();
+                    m1 * (end - start).powi(2) / X::from_usize(2 * n_step).unwrap()
                 }
                 Some(ComputeMethod::Trapezoid) => {
-                    todo!()
+                    let d1: Vec<X> = (1..n_step)
+                        .map(|step_id| match &self.function {
+                            Some(FunctionDescriptor::Closure(f)) => {
+                                (f(start + step * X::from_usize(step_id).unwrap())
+                                    - f(start + step * X::from_usize(step_id - 1).unwrap()))
+                                    / step
+                            }
+                            Some(FunctionDescriptor::Values(v)) => {
+                                (v[step_id] - v[step_id - 1]) / step
+                            }
+                            None => unreachable!(),
+                        })
+                        .collect();
+                    let m2: X = (1..n_step - 2)
+                        .map(|step_id| d1[step_id] - d1[step_id - 1] / step)
+                        .max_by(|t1, t2| t1.partial_cmp(t2).unwrap())
+                        .unwrap();
+                    let end = start + step * X::from_usize(n_step).unwrap();
+                    m2 * (end - start).powi(3) / X::from_usize(24 * n_step.pow(2)).unwrap()
                 }
                 #[cfg(feature = "montecarlo")]
                 Some(ComputeMethod::MonteCarlo { .. }) => {
