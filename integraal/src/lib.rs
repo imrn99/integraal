@@ -3,10 +3,14 @@
 //! *Integraal* aims to provide generic and efficient tools for [numerical integration][NI] in
 //! the Rust Programming Language.
 //!
-//! The crate currently implements a very specific subsection of its ambitious scope. It roughly
-//! corresponds to the example provided for the [`Integraal`] example.
+//! # Quickstart
+//!
+//! Multiple standalone examples are provided in the GitHub [repository][GH]. You can also look at
+//! the example provided for the [`Integraal`] structure for a very concise overview of the crate's
+//! usage.
 //!
 //! [NI]: https://en.wikipedia.org/wiki/Numerical_integration
+//! [GH]: https://github.com/imrn99/integraal
 
 // --- CUSTOM LINTS
 

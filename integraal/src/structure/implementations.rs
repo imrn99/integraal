@@ -40,7 +40,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
     /// # Return / Errors
     ///
     /// This method returns a `Result` taking the following values:
-    /// - `Ok(f64)` -- The computation was successfuly done
+    /// - `Ok(X: Scalar)` -- The computation was successfuly done
     /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
     pub fn compute(&mut self) -> Result<X, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {

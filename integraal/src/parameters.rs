@@ -7,8 +7,8 @@ use crate::Scalar;
 /// This is essentially a discretization of the integrated space.
 ///
 /// Currently, the supported integration domain can only be one-dimensionnal, described using
-/// `f64` values (i.e. the type used for further computations). In the future, adding support
-/// for higher dimension & generic value type can be considered.
+/// a value type (implementing [`Scalar`]). In the future, adding support for higher dimension
+/// can be considered.
 #[derive(Debug, Clone)]
 pub enum DomainDescriptor<'a, T: Scalar> {
     /// List of values taken by the variable on which we integrate.
