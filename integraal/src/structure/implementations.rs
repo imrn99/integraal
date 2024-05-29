@@ -205,7 +205,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
     )]
     /// This method attempts to compute the numerical error one can expect from the approximation.
     ///
-    /// TODO: add ref to error formulae
+    /// Error formulae were taken from the respective methods' Wikipedia pages.
     ///
     /// # Return / Errors
     ///
