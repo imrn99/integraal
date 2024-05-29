@@ -5,7 +5,6 @@
 use crate::{
     ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
 };
-use num::abs;
 use std::ops::Deref;
 
 // ------ CONTENT
@@ -76,7 +75,8 @@ impl<'a, X: Scalar> Integraal<'a, X> {
                             let step = args[idx] - args[idx - 1];
                             let y1 = vals[idx - 1];
                             let y2 = vals[idx];
-                            (y1.min(y2) + abs(y1 - y2) / X::from_f32(2.0).unwrap()) * step
+                            (y1.min(y2) + num_traits::abs(y1 - y2) / X::from_f32(2.0).unwrap())
+                                * step
                         })
                         .sum(),
                     #[cfg(feature = "montecarlo")]
