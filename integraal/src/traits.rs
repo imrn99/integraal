@@ -1,4 +1,4 @@
-//! module doc
+//! Common traits implementation
 
 /// Scalar value trait.
 ///

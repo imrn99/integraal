@@ -197,4 +197,85 @@ impl<'a, X: Scalar> Integraal<'a, X> {
         self.function = None;
         Ok(res)
     }
+
+    #[allow(
+        clippy::missing_errors_doc,
+        clippy::missing_panics_doc,
+        clippy::too_many_lines
+    )]
+    /// This method attempts to compute the numerical error one can expect from the approximation.
+    ///
+    /// Error formulae were taken from the respective methods' Wikipedia pages.
+    ///
+    /// # Return / Errors
+    ///
+    /// This method returns a `Result` taking the following values:
+    /// - `Ok(X: Scalar)` -- The computation was successfuly done
+    /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
+    pub fn compute_error(&mut self) -> Result<X, IntegraalError> {
+        if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
+            return Err(IntegraalError::MissingParameters(
+                "one or more parameter is missing",
+            ));
+        }
+        if let Some(DomainDescriptor::Uniform {
+            start,
+            step,
+            n_step,
+        }) = self.domain
+        {
+            // ref: https://en.wikipedia.org/wiki/Riemann_sum#Riemann_summation_methods
+            let res: X = match self.method {
+                Some(ComputeMethod::RectangleLeft | ComputeMethod::RectangleRight) => {
+                    let m1: X = (1..n_step)
+                        .map(|step_id| match &self.function {
+                            Some(FunctionDescriptor::Closure(f)) => {
+                                (f(start + step * X::from_usize(step_id).unwrap())
+                                    - f(start + step * X::from_usize(step_id - 1).unwrap()))
+                                    / step
+                            }
+                            Some(FunctionDescriptor::Values(v)) => {
+                                (v[step_id] - v[step_id - 1]) / step
+                            }
+                            None => unreachable!(),
+                        })
+                        .max_by(|t1, t2| t1.partial_cmp(t2).unwrap())
+                        .unwrap();
+                    let end = start + step * X::from_usize(n_step).unwrap();
+                    m1 * (end - start).powi(2) / X::from_usize(2 * n_step).unwrap()
+                }
+                Some(ComputeMethod::Trapezoid) => {
+                    let d1: Vec<X> = (1..n_step)
+                        .map(|step_id| match &self.function {
+                            Some(FunctionDescriptor::Closure(f)) => {
+                                (f(start + step * X::from_usize(step_id).unwrap())
+                                    - f(start + step * X::from_usize(step_id - 1).unwrap()))
+                                    / step
+                            }
+                            Some(FunctionDescriptor::Values(v)) => {
+                                (v[step_id] - v[step_id - 1]) / step
+                            }
+                            None => unreachable!(),
+                        })
+                        .collect();
+                    let m2: X = (1..n_step - 2)
+                        .map(|step_id| d1[step_id] - d1[step_id - 1] / step)
+                        .max_by(|t1, t2| t1.partial_cmp(t2).unwrap())
+                        .unwrap();
+                    let end = start + step * X::from_usize(n_step).unwrap();
+                    m2 * (end - start).powi(3) / X::from_usize(24 * n_step.pow(2)).unwrap()
+                }
+                #[cfg(feature = "montecarlo")]
+                Some(ComputeMethod::MonteCarlo { .. }) => {
+                    todo!()
+                }
+                None => unreachable!(),
+            };
+            Ok(res)
+        } else {
+            Err(IntegraalError::InconsistentParameters(
+                "numerical error computation in not supported for non-uniform domains",
+            ))
+        }
+    }
 }
