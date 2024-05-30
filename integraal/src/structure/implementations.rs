@@ -239,7 +239,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
                             }
                             None => unreachable!(),
                         })
-                        .max_by(|t1, t2| t1.partial_cmp(t2).unwrap())
+                        .max_by(|t1, t2| t1.abs().partial_cmp(&t2.abs()).unwrap())
                         .unwrap();
                     let end = start + step * X::from_usize(n_step).unwrap();
                     m1 * (end - start).powi(2) / X::from_usize(2 * n_step).unwrap()
@@ -260,7 +260,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
                         .collect();
                     let m2: X = (1..n_step - 2)
                         .map(|step_id| d1[step_id] - d1[step_id - 1] / step)
-                        .max_by(|t1, t2| t1.partial_cmp(t2).unwrap())
+                        .max_by(|t1, t2| t1.abs().partial_cmp(&t2.abs()).unwrap())
                         .unwrap();
                     let end = start + step * X::from_usize(n_step).unwrap();
                     m2 * (end - start).powi(3) / X::from_usize(24 * n_step.pow(2)).unwrap()
