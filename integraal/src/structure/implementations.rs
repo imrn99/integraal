@@ -212,7 +212,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
     /// This method returns a `Result` taking the following values:
     /// - `Ok(X: Scalar)` -- The computation was successfuly done
     /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
-    pub fn compute_error(&mut self) -> Result<X, IntegraalError> {
+    pub fn compute_error(&self) -> Result<X, IntegraalError> {
         if self.domain.is_none() | self.function.is_none() | self.method.is_none() {
             return Err(IntegraalError::MissingParameters(
                 "one or more parameter is missing",

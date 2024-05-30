@@ -2,7 +2,9 @@
 
 // ------ IMPORTS
 
-use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError};
+use crate::{
+    ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
+};
 
 // ------ CONTENT
 
