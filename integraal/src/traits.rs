@@ -6,9 +6,9 @@
 pub trait Scalar:
     Clone
     + Copy
-    + num::Float
-    + num::Signed
-    + num::FromPrimitive
+    + num_traits::Float
+    + num_traits::Signed
+    + num_traits::FromPrimitive
     + std::ops::Sub<Output = Self>
     + std::ops::Mul<Output = Self>
     + std::iter::Sum
@@ -18,9 +18,9 @@ pub trait Scalar:
 impl<
         X: Clone
             + Copy
-            + num::Float
-            + num::Signed
-            + num::FromPrimitive
+            + num_traits::Float
+            + num_traits::Signed
+            + num_traits::FromPrimitive
             + std::ops::Sub<Output = Self>
             + std::ops::Mul<Output = Self>
             + std::iter::Sum,
