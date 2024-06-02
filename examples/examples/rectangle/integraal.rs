@@ -11,8 +11,10 @@ fn main() {
     let method = ComputeMethod::RectangleLeft;
 
     // build the integral
-    let mut integral = Integraal::default();
-    integral.domain(domain).function(function).method(method);
+    let mut integral = Integraal::default()
+        .domain(domain)
+        .function(function)
+        .method(method);
 
     // compute & print
     let res: f64 = integral.compute().unwrap();

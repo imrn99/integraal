@@ -52,8 +52,10 @@ pub enum IntegraalError {
 /// let method = ComputeMethod::Trapezoid;
 ///
 /// // build the integral & compute it
-/// let mut integral = Integraal::default();
-/// integral.domain(domain).function(function).method(method);
+/// let mut integral = Integraal::default()
+///     .domain(domain)
+///     .function(function)
+///     .method(method);
 /// assert!(integral.compute().is_ok())
 /// # }
 /// ```
