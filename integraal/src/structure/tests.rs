@@ -150,7 +150,7 @@ macro_rules! generate_test {
             );
         }
     };
-    ($name: ident, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
+    ($name: ident, $fnd: expr, $dmd: expr, $met: expr) => {
         #[allow(non_snake_case)]
         #[test]
         fn $name() {
@@ -158,17 +158,12 @@ macro_rules! generate_test {
             let domaind = $dmd;
             let computem = $met;
             let mut integraal = Integraal::default();
-            let res = integraal
+            integraal
                 .function(functiond)
                 .domain(domaind)
-                .method(computem)
-                .compute();
-            assert!(res.is_ok());
-            assert!(
-                almost_equal!(res.unwrap(), 2.0, $tol),
-                "left: {} \nright: 2.0",
-                res.unwrap()
-            );
+                .method(computem);
+            let (res, msg) = is_within_tolerance(integraal, 2.0);
+            assert!(res, "{msg}");
         }
     };
 }
@@ -196,8 +191,7 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleLeft
     );
 
     generate_test!(
@@ -223,8 +217,7 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleLeft
     );
 }
 
@@ -251,8 +244,7 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleRight
     );
 
     generate_test!(
@@ -278,8 +270,7 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleRight
     );
 }
 
@@ -306,8 +297,7 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid,
-        TRAPEZOID_TOLERANCE
+        ComputeMethod::Trapezoid
     );
 
     generate_test!(
@@ -333,8 +323,7 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid,
-        TRAPEZOID_TOLERANCE
+        ComputeMethod::Trapezoid
     );
 }
 
