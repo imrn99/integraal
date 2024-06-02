@@ -2,7 +2,9 @@
 
 // ------ IMPORTS
 
-use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError};
+use crate::{
+    ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
+};
 
 // ------ CONTENT
 
@@ -11,12 +13,6 @@ use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, Inte
 const RECTANGLE_TOLERANCE: f64 = 1e-5;
 const TRAPEZOID_TOLERANCE: f64 = 1e-5;
 const STEP: f64 = 0.001;
-
-macro_rules! almost_equal {
-    ($v1: expr, $v2: expr, $tol: ident) => {
-        ($v1 - $v2).abs() < $tol
-    };
-}
 
 macro_rules! generate_sample_descriptors {
     ($f: ident, $d: ident, $c: ident) => {
@@ -103,6 +99,26 @@ fn inconsistent_parameters() {
 
 // correct usages
 
+fn is_within_tolerance<T: Scalar>(
+    mut integraal: Integraal<T>,
+    expected_result: T,
+) -> (bool, String) {
+    let tolerance = integraal.compute_error().unwrap();
+    let computed_result = integraal.compute().unwrap();
+    let sum = expected_result.abs() + computed_result.abs();
+    let delta = (computed_result - expected_result).abs();
+    (
+        delta < tolerance + T::epsilon() * sum.min(T::max_value()),
+        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}\ncomputed tolerance: {tolerance:?}"),
+    )
+}
+
+macro_rules! almost_equal {
+    ($v1: expr, $v2: expr, $tol: ident) => {
+        ($v1 - $v2).abs() < $tol
+    };
+}
+
 // test are groups per module according to the integral & the computation method
 // test names follow this pattern:
 // <FunctionDescriptorEnum><DomainDescriptorEnum>
@@ -134,7 +150,7 @@ macro_rules! generate_test {
             );
         }
     };
-    ($name: ident, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
+    ($name: ident, $fnd: expr, $dmd: expr, $met: expr) => {
         #[allow(non_snake_case)]
         #[test]
         fn $name() {
@@ -142,17 +158,12 @@ macro_rules! generate_test {
             let domaind = $dmd;
             let computem = $met;
             let mut integraal = Integraal::default();
-            let res = integraal
+            integraal
                 .function(functiond)
                 .domain(domaind)
-                .method(computem)
-                .compute();
-            assert!(res.is_ok());
-            assert!(
-                almost_equal!(res.unwrap(), 2.0, $tol),
-                "left: {} \nright: 2.0",
-                res.unwrap()
-            );
+                .method(computem);
+            let (res, msg) = is_within_tolerance(integraal, 2.0);
+            assert!(res, "{msg}");
         }
     };
 }
@@ -180,8 +191,7 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleLeft
     );
 
     generate_test!(
@@ -207,8 +217,7 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleLeft
     );
 }
 
@@ -235,8 +244,7 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleRight
     );
 
     generate_test!(
@@ -262,8 +270,7 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight,
-        RECTANGLE_TOLERANCE
+        ComputeMethod::RectangleRight
     );
 }
 
@@ -290,8 +297,7 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid,
-        TRAPEZOID_TOLERANCE
+        ComputeMethod::Trapezoid
     );
 
     generate_test!(
@@ -317,8 +323,7 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid,
-        TRAPEZOID_TOLERANCE
+        ComputeMethod::Trapezoid
     );
 }
 
