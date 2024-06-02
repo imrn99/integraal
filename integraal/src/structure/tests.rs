@@ -109,7 +109,7 @@ fn is_within_tolerance<T: Scalar>(
     let delta = (computed_result - expected_result).abs();
     (
         delta < tolerance + T::epsilon() * sum.min(T::max_value()),
-        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}"),
+        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}\ncomputed tolerance: {tolerance:?}"),
     )
 }
 
