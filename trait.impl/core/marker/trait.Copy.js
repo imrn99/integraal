@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"integraal":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"enum\" href=\"integraal/enum.ComputeMethod.html\" title=\"enum integraal::ComputeMethod\">ComputeMethod</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"enum\" href=\"integraal/enum.IntegraalError.html\" title=\"enum integraal::IntegraalError\">IntegraalError</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
