@@ -24,8 +24,7 @@ macro_rules! generate_sample_descriptors {
 
 macro_rules! generate_missing {
     ($a: ident, $b: ident) => {
-        let mut integral: Integraal<'_, f64> = Integraal::default();
-        integral.$a($a).$b($b);
+        let mut integral: Integraal<'_, f64> = Integraal::default().$a($a).$b($b);
         assert_eq!(
             integral.compute(),
             Err(IntegraalError::MissingParameters(
@@ -53,8 +52,7 @@ fn missing_parameters() {
     generate_missing!(function, domain);
 
     // missing all but one
-    let mut integral: Integraal<'_, f64> = Integraal::default();
-    integral.method(method);
+    let mut integral: Integraal<'_, f64> = Integraal::default().method(method);
     assert_eq!(
         integral.compute(),
         Err(IntegraalError::MissingParameters(
@@ -70,8 +68,10 @@ fn inconsistent_parameters() {
     let domain = vec![0.0, 0.1, 0.2, 0.3, 0.4]; // missing the last x value
     let domain = DomainDescriptor::Explicit(&domain);
 
-    let mut integral = Integraal::default();
-    integral.method(method).function(function).domain(domain);
+    let mut integral = Integraal::default()
+        .method(method)
+        .function(function)
+        .domain(domain);
     assert_eq!(
         integral.compute(),
         Err(IntegraalError::InconsistentParameters(
@@ -87,8 +87,10 @@ fn inconsistent_parameters() {
     };
     let function = FunctionDescriptor::Values(vec![1., 1., 1., 1., 1., 1.]);
 
-    let mut integral = Integraal::default();
-    integral.method(method).function(function).domain(domain);
+    let mut integral = Integraal::default()
+        .method(method)
+        .function(function)
+        .domain(domain);
     assert_eq!(
         integral.compute(),
         Err(IntegraalError::InconsistentParameters(
@@ -136,12 +138,11 @@ macro_rules! generate_test {
             let functiond = $fnd;
             let domaind = $dmd;
             let computem = $met;
-            let mut integraal = Integraal::default();
-            let res = integraal
+            let mut integraal = Integraal::default()
                 .function(functiond)
                 .domain(domaind)
-                .method(computem)
-                .compute();
+                .method(computem);
+            let res = integraal.compute();
             assert!(res.is_ok());
             assert!(
                 almost_equal!(res.unwrap(), 2.0, $tol),
@@ -157,8 +158,7 @@ macro_rules! generate_test {
             let functiond = $fnd;
             let domaind = $dmd;
             let computem = $met;
-            let mut integraal = Integraal::default();
-            integraal
+            let integraal = Integraal::default()
                 .function(functiond)
                 .domain(domaind)
                 .method(computem);
@@ -343,7 +343,7 @@ fn B_Closure_Explicit_Rectangle() {
         .collect();
     let domaind = DomainDescriptor::Explicit(&domain);
     let computem = ComputeMethod::RectangleLeft;
-    let mut integraal = Integraal::default();
+    let integraal = Integraal::default();
     let res = integraal
         .function(functiond)
         .domain(domaind)

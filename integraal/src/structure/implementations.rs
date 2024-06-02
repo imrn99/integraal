@@ -11,19 +11,22 @@ use std::ops::Deref;
 
 impl<'a, X: Scalar> Integraal<'a, X> {
     /// Set the domain descriptor.
-    pub fn domain(&mut self, domain_descriptor: DomainDescriptor<'a, X>) -> &mut Self {
+    #[must_use = "unused builder struct - please remove this call"]
+    pub fn domain(mut self, domain_descriptor: DomainDescriptor<'a, X>) -> Self {
         self.domain = Some(domain_descriptor);
         self
     }
 
     /// Set the function descriptor.
-    pub fn function(&mut self, function_descriptor: FunctionDescriptor<X>) -> &mut Self {
+    #[must_use = "unused builder struct - please remove this call"]
+    pub fn function(mut self, function_descriptor: FunctionDescriptor<X>) -> Self {
         self.function = Some(function_descriptor);
         self
     }
 
     /// Set the numerical integration method.
-    pub fn method(&mut self, compute_method: ComputeMethod) -> &mut Self {
+    #[must_use = "unused builder struct - please remove this call"]
+    pub fn method(mut self, compute_method: ComputeMethod) -> Self {
         self.method = Some(compute_method);
         self
     }
