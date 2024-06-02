@@ -1,11 +1,14 @@
 //! Common traits implementation
 
+use std::fmt::Debug;
+
 /// Scalar value trait.
 ///
 /// This trait is automatically implemented for all types implementing its requirements.
 pub trait Scalar:
     Clone
     + Copy
+    + Debug
     + num_traits::Float
     + num_traits::Signed
     + num_traits::FromPrimitive
@@ -18,6 +21,7 @@ pub trait Scalar:
 impl<
         X: Clone
             + Copy
+            + Debug
             + num_traits::Float
             + num_traits::Signed
             + num_traits::FromPrimitive

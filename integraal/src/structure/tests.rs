@@ -14,12 +14,6 @@ const RECTANGLE_TOLERANCE: f64 = 1e-5;
 const TRAPEZOID_TOLERANCE: f64 = 1e-5;
 const STEP: f64 = 0.001;
 
-macro_rules! almost_equal {
-    ($v1: expr, $v2: expr, $tol: ident) => {
-        ($v1 - $v2).abs() < $tol
-    };
-}
-
 macro_rules! generate_sample_descriptors {
     ($f: ident, $d: ident, $c: ident) => {
         let $f: FunctionDescriptor<f64> = FunctionDescriptor::Closure(Box::new(|x| x));
@@ -104,6 +98,26 @@ fn inconsistent_parameters() {
 }
 
 // correct usages
+
+fn is_within_tolerance<T: Scalar>(
+    mut integraal: Integraal<T>,
+    expected_result: T,
+) -> (bool, String) {
+    let tolerance = integraal.compute_error().unwrap();
+    let computed_result = integraal.compute().unwrap();
+    let sum = expected_result.abs() + computed_result.abs();
+    let delta = (computed_result - expected_result).abs();
+    (
+        delta < tolerance + T::epsilon() * sum.min(T::max_value()),
+        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}"),
+    )
+}
+
+macro_rules! almost_equal {
+    ($v1: expr, $v2: expr, $tol: ident) => {
+        ($v1 - $v2).abs() < $tol
+    };
+}
 
 // test are groups per module according to the integral & the computation method
 // test names follow this pattern:
