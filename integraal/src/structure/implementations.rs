@@ -52,42 +52,10 @@ impl<'a, X: Scalar> Integraal<'a, X> {
         }
         let res = match (&self.function, &self.domain) {
             (Some(FunctionDescriptor::Values(vals)), Some(DomainDescriptor::Explicit(args))) => {
-                if args.len() != vals.len() {
-                    return Err(IntegraalError::InconsistentParameters(
-                        "provided function and domain value slices have different lengthes",
-                    ));
-                }
-                let n_sample = args.len();
-
-                // because the domain may be not uniform, we have to compute step values
-                match &self.method {
-                    Some(ComputeMethod::RectangleLeft) => (1..n_sample)
-                        .map(|idx| {
-                            let step = args[idx] - args[idx - 1];
-                            vals[idx - 1] * step
-                        })
-                        .sum(),
-                    Some(ComputeMethod::RectangleRight) => (1..n_sample)
-                        .map(|idx| {
-                            let step = args[idx] - args[idx - 1];
-                            vals[idx] * step
-                        })
-                        .sum(),
-                    Some(ComputeMethod::Trapezoid) => (1..n_sample)
-                        .map(|idx| {
-                            let step = args[idx] - args[idx - 1];
-                            let y1 = vals[idx - 1];
-                            let y2 = vals[idx];
-                            (y1.min(y2) + num_traits::abs(y1 - y2) / X::from_f32(2.0).unwrap())
-                                * step
-                        })
-                        .sum(),
-                    #[cfg(feature = "montecarlo")]
-                    Some(ComputeMethod::MonteCarlo { n_sample: _ }) => {
-                        todo!()
-                    }
-                    None => unreachable!(),
-                }
+                let Some(method) = &self.method else {
+                    unreachable!()
+                };
+                values_explicit_arm(vals, args, method)?
             }
             (
                 Some(FunctionDescriptor::Values(vals)),
@@ -282,4 +250,47 @@ impl<'a, X: Scalar> Integraal<'a, X> {
             ))
         }
     }
+}
+
+fn values_explicit_arm<X: Scalar>(
+    vals: &[X],
+    args: &[X],
+    method: &ComputeMethod,
+) -> Result<X, IntegraalError> {
+    if args.len() != vals.len() {
+        return Err(IntegraalError::InconsistentParameters(
+            "function and domain value slices have different lengthes",
+        ));
+    }
+    let n_sample = args.len();
+
+    // because the domain may be not uniform, we have to compute step values
+    let res = match method {
+        ComputeMethod::RectangleLeft => (1..n_sample)
+            .map(|idx| {
+                let step = args[idx] - args[idx - 1];
+                vals[idx - 1] * step
+            })
+            .sum(),
+        ComputeMethod::RectangleRight => (1..n_sample)
+            .map(|idx| {
+                let step = args[idx] - args[idx - 1];
+                vals[idx] * step
+            })
+            .sum(),
+        ComputeMethod::Trapezoid => (1..n_sample)
+            .map(|idx| {
+                let step = args[idx] - args[idx - 1];
+                let y1 = vals[idx - 1];
+                let y2 = vals[idx];
+                (y1.min(y2) + num_traits::abs(y1 - y2) / X::from_f32(2.0).unwrap()) * step
+            })
+            .sum(),
+        #[cfg(feature = "montecarlo")]
+        ComputeMethod::MonteCarlo { n_sample: _ } => {
+            todo!()
+        }
+    };
+
+    Ok(res)
 }
