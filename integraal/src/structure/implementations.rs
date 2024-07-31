@@ -33,7 +33,6 @@ impl<'a, X: Scalar> Integraal<'a, X> {
     #[allow(
         clippy::missing_errors_doc,
         clippy::missing_panics_doc,
-        clippy::too_many_lines
     )]
     /// This method attempts to compute the integral. If it is successful, it will clear the
     /// internal [`FunctionDescriptor`] object before returning the result.
@@ -87,7 +86,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
             ) => closure_uniform_arm(closure, domain, method)?,
             (_, _) => unreachable!(),
         };
-        
+
         self.function = None; // is this really useful? we could wire returns directly using `?` if this wasn't here
         Ok(res)
     }
