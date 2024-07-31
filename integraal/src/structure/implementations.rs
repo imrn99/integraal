@@ -30,10 +30,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
         self
     }
 
-    #[allow(
-        clippy::missing_errors_doc,
-        clippy::missing_panics_doc,
-    )]
+    #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
     /// This method attempts to compute the integral. If it is successful, it will clear the
     /// internal [`FunctionDescriptor`] object before returning the result.
     ///
@@ -63,13 +60,13 @@ impl<'a, X: Scalar> Integraal<'a, X> {
             // function descriptor -- values
             // domain descriptor   -- explicit
             (
-                Some(FunctionDescriptor::Values(vals)), 
+                Some(FunctionDescriptor::Values(vals)),
                 Some(DomainDescriptor::Explicit(args))
             ) => values_explicit_arm(vals, args, method)?,
             // function descriptor -- values
             // domain descriptor   -- uniform
             (
-                Some(FunctionDescriptor::Values(vals)), 
+                Some(FunctionDescriptor::Values(vals)),
                 Some(DomainDescriptor::Uniform { .. })
             ) => values_uniform_arm(vals, domain, method)?,
             // function descriptor -- closure

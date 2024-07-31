@@ -21,7 +21,7 @@ fn main() {
     let count: usize = rets
         .map(|y| {
             let iter = (&mut rng)
-                .sample_iter::<f64, _>(rand::distributions::Uniform::new(0.0, 2.0).unwrap())
+                .sample_iter::<f64, _>(rand::distr::Uniform::new(0.0, 2.0).unwrap())
                 .take(N_MONTECARLO_SAMPLE);
             iter.filter(|sample| *sample <= y).count()
         })
