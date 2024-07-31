@@ -75,7 +75,7 @@ fn inconsistent_parameters() {
     assert_eq!(
         integral.compute(),
         Err(IntegraalError::InconsistentParameters(
-            "provided function and domain value slices have different lengthes"
+            "function and domain value slices have different lengthes"
         ))
     );
 
