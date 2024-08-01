@@ -114,9 +114,14 @@ fn is_within_tolerance<T: Scalar>(
     )
 }
 
+// works for F: Float
 macro_rules! almost_equal {
-    ($v1: expr, $v2: expr, $tol: ident) => {
-        ($v1 - $v2).abs() < $tol
+    ($ft: ty, $v1: expr, $v2: expr) => {
+        ($v1 - $v2).abs() < ($v1.abs() + $v2.abs()).min(<$ft as num_traits::Float>::max_value())
+    };
+    ($ft: ty,$v1: expr, $v2: expr, $tol: ident) => {
+        ($v1 - $v2).abs()
+            < ($v1.abs() + $v2.abs()).min(<$ft as num_traits::Float>::max_value()) + $tol
     };
 }
 
@@ -144,7 +149,7 @@ macro_rules! generate_test {
             let res = integraal.compute();
             assert!(res.is_ok());
             assert!(
-                almost_equal!(res.unwrap(), 2.0, $tol),
+                almost_equal!(f64, res.unwrap(), 2.0_f64, $tol),
                 "left: {} \nright: 2.0",
                 res.unwrap()
             );
@@ -357,7 +362,7 @@ fn B_Closure_Explicit_Rectangle() {
         .compute();
     assert!(res.is_ok());
     assert!(
-        almost_equal!(res.unwrap(), 0.0, RECTANGLE_TOLERANCE),
+        almost_equal!(f64, res.unwrap(), 0.0_f64, RECTANGLE_TOLERANCE),
         "left: {} \nright: 0.0",
         res.unwrap()
     );
