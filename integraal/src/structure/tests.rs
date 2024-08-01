@@ -2,9 +2,7 @@
 
 // ------ IMPORTS
 
-use crate::{
-    ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
-};
+use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError};
 
 // ------ CONTENT
 
@@ -101,23 +99,14 @@ fn inconsistent_parameters() {
 
 // correct usages
 
-fn is_within_tolerance<T: Scalar>(
-    mut integraal: Integraal<T>,
-    expected_result: T,
-) -> (bool, String) {
-    let tolerance = integraal.compute_error().unwrap();
-    let computed_result = integraal.compute().unwrap();
-    let sum = expected_result.abs() + computed_result.abs();
-    let delta = (computed_result - expected_result).abs();
-    (
-        delta < tolerance + T::epsilon() * sum.min(T::max_value()),
-        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}\ncomputed tolerance: {tolerance:?}"),
-    )
-}
-
+// works for F: Float
 macro_rules! almost_equal {
-    ($v1: expr, $v2: expr, $tol: ident) => {
-        ($v1 - $v2).abs() < $tol
+    ($ft: ty, $v1: expr, $v2: expr) => {
+        ($v1 - $v2).abs() < ($v1.abs() + $v2.abs()).min(<$ft as num_traits::Float>::max_value())
+    };
+    ($ft: ty,$v1: expr, $v2: expr, $tol: ident) => {
+        ($v1 - $v2).abs()
+            < ($v1.abs() + $v2.abs()).min(<$ft as num_traits::Float>::max_value()) + $tol
     };
 }
 
@@ -145,25 +134,29 @@ macro_rules! generate_test {
             let res = integraal.compute();
             assert!(res.is_ok());
             assert!(
-                almost_equal!(res.unwrap(), 2.0, $tol),
+                almost_equal!(f64, res.unwrap(), 2.0_f64, $tol),
                 "left: {} \nright: 2.0",
                 res.unwrap()
             );
         }
     };
-    ($name: ident, $fnd: expr, $dmd: expr, $met: expr) => {
+    ($name: ident, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
         #[allow(non_snake_case)]
         #[test]
         fn $name() {
             let functiond = $fnd;
             let domaind = $dmd;
             let computem = $met;
-            let integraal = Integraal::default()
+            let mut integraal = Integraal::default()
                 .function(functiond)
                 .domain(domaind)
                 .method(computem);
-            let (res, msg) = is_within_tolerance(integraal, 2.0);
-            assert!(res, "{msg}");
+            let res = integraal.compute().unwrap();
+            assert!(
+                almost_equal!(f64, res, 2.0_f64, $tol),
+                "computed value: {res:?}\nexpected value: 2.0\ntolerance: {:?}",
+                $tol
+            );
         }
     };
 }
@@ -191,7 +184,8 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft
+        ComputeMethod::RectangleLeft,
+        RECTANGLE_TOLERANCE
     );
 
     generate_test!(
@@ -217,7 +211,8 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft
+        ComputeMethod::RectangleLeft,
+        RECTANGLE_TOLERANCE
     );
 }
 
@@ -244,7 +239,8 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight
+        ComputeMethod::RectangleRight,
+        RECTANGLE_TOLERANCE
     );
 
     generate_test!(
@@ -270,7 +266,8 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight
+        ComputeMethod::RectangleRight,
+        RECTANGLE_TOLERANCE
     );
 }
 
@@ -297,7 +294,8 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid
+        ComputeMethod::Trapezoid,
+        TRAPEZOID_TOLERANCE
     );
 
     generate_test!(
@@ -323,7 +321,8 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid
+        ComputeMethod::Trapezoid,
+        TRAPEZOID_TOLERANCE
     );
 }
 
@@ -351,7 +350,7 @@ fn B_Closure_Explicit_Rectangle() {
         .compute();
     assert!(res.is_ok());
     assert!(
-        almost_equal!(res.unwrap(), 0.0, RECTANGLE_TOLERANCE),
+        almost_equal!(f64, res.unwrap(), 0.0_f64, RECTANGLE_TOLERANCE),
         "left: {} \nright: 0.0",
         res.unwrap()
     );
