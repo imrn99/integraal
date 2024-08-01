@@ -2,9 +2,7 @@
 
 // ------ IMPORTS
 
-use crate::{
-    ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
-};
+use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError};
 
 // ------ CONTENT
 
@@ -101,19 +99,6 @@ fn inconsistent_parameters() {
 
 // correct usages
 
-fn is_within_tolerance<T: Scalar>(
-    computed_result: T,
-    expected_result: T,
-    tolerance: T,
-) -> (bool, String) {
-    let sum = expected_result.abs() + computed_result.abs();
-    let delta = (computed_result - expected_result).abs();
-    (
-        delta < tolerance + T::epsilon() * sum.min(T::max_value()),
-        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}\ntolerance: {tolerance:?}"),
-    )
-}
-
 // works for F: Float
 macro_rules! almost_equal {
     ($ft: ty, $v1: expr, $v2: expr) => {
@@ -167,8 +152,11 @@ macro_rules! generate_test {
                 .domain(domaind)
                 .method(computem);
             let res = integraal.compute().unwrap();
-            let (res, msg) = is_within_tolerance(res, 2.0, $tol);
-            assert!(res, "{msg}");
+            assert!(
+                almost_equal!(f64, res, 2.0_f64, $tol),
+                "computed value: {res:?}\nexpected value: 2.0\ntolerance: {:?}",
+                $tol
+            );
         }
     };
 }
