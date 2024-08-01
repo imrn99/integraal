@@ -102,16 +102,15 @@ fn inconsistent_parameters() {
 // correct usages
 
 fn is_within_tolerance<T: Scalar>(
-    mut integraal: Integraal<T>,
+    computed_result: T,
     expected_result: T,
+    tolerance: T,
 ) -> (bool, String) {
-    let tolerance = integraal.compute_error().unwrap();
-    let computed_result = integraal.compute().unwrap();
     let sum = expected_result.abs() + computed_result.abs();
     let delta = (computed_result - expected_result).abs();
     (
         delta < tolerance + T::epsilon() * sum.min(T::max_value()),
-        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}\ncomputed tolerance: {tolerance:?}"),
+        format!("computed value: {computed_result:?}\nexpected value {expected_result:?}\ntolerance: {tolerance:?}"),
     )
 }
 
@@ -151,18 +150,19 @@ macro_rules! generate_test {
             );
         }
     };
-    ($name: ident, $fnd: expr, $dmd: expr, $met: expr) => {
+    ($name: ident, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
         #[allow(non_snake_case)]
         #[test]
         fn $name() {
             let functiond = $fnd;
             let domaind = $dmd;
             let computem = $met;
-            let integraal = Integraal::default()
+            let mut integraal = Integraal::default()
                 .function(functiond)
                 .domain(domaind)
                 .method(computem);
-            let (res, msg) = is_within_tolerance(integraal, 2.0);
+            let res = integraal.compute().unwrap();
+            let (res, msg) = is_within_tolerance(res, 2.0, $tol);
             assert!(res, "{msg}");
         }
     };
@@ -191,7 +191,8 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft
+        ComputeMethod::RectangleLeft,
+        RECTANGLE_TOLERANCE
     );
 
     generate_test!(
@@ -217,7 +218,8 @@ mod a_rectangleleft {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleLeft
+        ComputeMethod::RectangleLeft,
+        RECTANGLE_TOLERANCE
     );
 }
 
@@ -244,7 +246,8 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight
+        ComputeMethod::RectangleRight,
+        RECTANGLE_TOLERANCE
     );
 
     generate_test!(
@@ -270,7 +273,8 @@ mod a_rectangleright {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::RectangleRight
+        ComputeMethod::RectangleRight,
+        RECTANGLE_TOLERANCE
     );
 }
 
@@ -297,7 +301,8 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid
+        ComputeMethod::Trapezoid,
+        TRAPEZOID_TOLERANCE
     );
 
     generate_test!(
@@ -323,7 +328,8 @@ mod a_trapezoid {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::Trapezoid
+        ComputeMethod::Trapezoid,
+        TRAPEZOID_TOLERANCE
     );
 }
 
