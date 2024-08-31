@@ -2,8 +2,6 @@
 
 // ------ IMPORTS
 
-use std::intrinsics::unreachable;
-
 use crate::{
     ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
 };
@@ -194,7 +192,17 @@ fn values_uniform_arm<X: Scalar>(
             })
             .sum(),
         ComputeMethod::SimpsonsThird => {
-            todo!();
+            let indices: Vec<_> = (0..*n_step - 4).collect();
+            (*step / X::from(3.0).unwrap())
+                * indices
+                    .windows(3)
+                    .map(|is| {
+                        let [i, ip1, ip2] = is else {
+                            unreachable!();
+                        };
+                        vals[*i] + X::from(2.0).unwrap() * vals[*ip1] + vals[*ip2]
+                    })
+                    .sum()
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
