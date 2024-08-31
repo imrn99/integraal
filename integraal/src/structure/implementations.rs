@@ -125,6 +125,9 @@ fn values_explicit_arm<X: Scalar>(
                 (y1.min(y2) + num_traits::abs(y1 - y2) / X::from_f32(2.0).unwrap()) * step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            todo!();
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -171,6 +174,9 @@ fn values_uniform_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            todo!();
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -207,6 +213,9 @@ fn closure_explicit_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            todo!();
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -253,6 +262,9 @@ fn closure_uniform_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            todo!();
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
