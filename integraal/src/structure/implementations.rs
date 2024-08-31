@@ -241,7 +241,23 @@ fn closure_explicit_arm<X: Scalar>(
             })
             .sum(),
         ComputeMethod::SimpsonsThird => {
-            todo!();
+            let indices: Vec<_> = (0..args.len() - 4).collect();
+            indices
+                .windows(3)
+                .map(|is| {
+                    let [i, ip1, ip2] = is else {
+                        unreachable!();
+                    };
+                    let (h_i, h_ip1) = (args[*ip1] - args[*i], args[*ip2] - args[*ip1]);
+                    let c_i = X::from(2.0).unwrap() - h_ip1 / h_i;
+                    let c_ip1 = (h_i + h_ip1).powi(2) / (h_i * h_ip1);
+                    let c_ip2 = X::from(2.0).unwrap() - h_i / h_ip1;
+                    (h_i + h_ip1) / X::from(6.0).unwrap()
+                        * (c_i * closure(args[*i])
+                            + c_ip1 * closure(args[*ip1])
+                            + c_ip2 * closure(args[*ip2]))
+                })
+                .sum()
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
