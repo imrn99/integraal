@@ -306,7 +306,20 @@ fn closure_uniform_arm<X: Scalar>(
             })
             .sum(),
         ComputeMethod::SimpsonsThird => {
-            todo!();
+            let indices: Vec<_> = (0..*n_step - 4).collect();
+            (*step / X::from(3.0).unwrap())
+                * indices
+                    .windows(3)
+                    .map(|is| {
+                        let [i, ip1, ip2] = is else {
+                            unreachable!();
+                        };
+                        closure(*start + *step * X::from(*i).unwrap())
+                            + X::from(2.0).unwrap()
+                                * closure(*start + *step * X::from(*ip1).unwrap())
+                            + closure(*start + *step * X::from(*ip2).unwrap())
+                    })
+                    .sum()
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
