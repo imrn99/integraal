@@ -200,7 +200,7 @@ fn values_uniform_arm<X: Scalar>(
                         let [i, ip1, ip2] = is else {
                             unreachable!();
                         };
-                        vals[*i] + X::from(2.0).unwrap() * vals[*ip1] + vals[*ip2]
+                        vals[*i] + X::from(4.0).unwrap() * vals[*ip1] + vals[*ip2]
                     })
                     .sum()
         }
@@ -315,7 +315,7 @@ fn closure_uniform_arm<X: Scalar>(
                             unreachable!();
                         };
                         closure(*start + *step * X::from(*i).unwrap())
-                            + X::from(2.0).unwrap()
+                            + X::from(4.0).unwrap()
                                 * closure(*start + *step * X::from(*ip1).unwrap())
                             + closure(*start + *step * X::from(*ip2).unwrap())
                     })
