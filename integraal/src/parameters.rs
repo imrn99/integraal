@@ -67,6 +67,9 @@ pub enum ComputeMethod {
     RectangleRight,
     /// Trapezoid method [reference](https://en.wikipedia.org/wiki/Trapezoidal_rule)
     Trapezoid,
+    /// Simpson's third rule [reference](https://en.wikipedia.org/wiki/Simpson%27s_rule),
+    /// [issue](https://github.com/imrn99/integraal/issues/23)
+    SimpsonsThird,
     #[cfg(feature = "montecarlo")]
     /// Monte-Carlo method [reference](https://en.wikipedia.org/wiki/Monte_Carlo_integration)
     MonteCarlo {

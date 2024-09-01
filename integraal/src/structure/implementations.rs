@@ -125,6 +125,26 @@ fn values_explicit_arm<X: Scalar>(
                 (y1.min(y2) + num_traits::abs(y1 - y2) / X::from_f32(2.0).unwrap()) * step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            // using the formula for irregularly spaced data:
+            // https://en.wikipedia.org/wiki/Simpson%27s_rule#Composite_Simpson's_rule_for_irregularly_spaced_data
+            // the formula is a sum from 0 to N-2, N the number of subintervals; so N = n_sample-1
+            let indices: Vec<_> = (0..n_sample - 4).collect();
+            indices
+                .windows(3)
+                .map(|is| {
+                    let [i, ip1, ip2] = is else {
+                        unreachable!();
+                    };
+                    let (h_i, h_ip1) = (args[*ip1] - args[*i], args[*ip2] - args[*ip1]);
+                    let c_i = X::from(2.0).unwrap() - h_ip1 / h_i;
+                    let c_ip1 = (h_i + h_ip1).powi(2) / (h_i * h_ip1);
+                    let c_ip2 = X::from(2.0).unwrap() - h_i / h_ip1;
+                    (h_i + h_ip1) / X::from(6.0).unwrap()
+                        * (c_i * vals[*i] + c_ip1 * vals[*ip1] + c_ip2 * vals[*ip2])
+                })
+                .sum()
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -171,6 +191,19 @@ fn values_uniform_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            let indices: Vec<_> = (0..*n_step - 4).collect();
+            (*step / X::from(3.0).unwrap())
+                * indices
+                    .windows(3)
+                    .map(|is| {
+                        let [i, ip1, ip2] = is else {
+                            unreachable!();
+                        };
+                        vals[*i] + X::from(4.0).unwrap() * vals[*ip1] + vals[*ip2]
+                    })
+                    .sum()
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -207,6 +240,25 @@ fn closure_explicit_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            let indices: Vec<_> = (0..args.len() - 4).collect();
+            indices
+                .windows(3)
+                .map(|is| {
+                    let [i, ip1, ip2] = is else {
+                        unreachable!();
+                    };
+                    let (h_i, h_ip1) = (args[*ip1] - args[*i], args[*ip2] - args[*ip1]);
+                    let c_i = X::from(2.0).unwrap() - h_ip1 / h_i;
+                    let c_ip1 = (h_i + h_ip1).powi(2) / (h_i * h_ip1);
+                    let c_ip2 = X::from(2.0).unwrap() - h_i / h_ip1;
+                    (h_i + h_ip1) / X::from(6.0).unwrap()
+                        * (c_i * closure(args[*i])
+                            + c_ip1 * closure(args[*ip1])
+                            + c_ip2 * closure(args[*ip2]))
+                })
+                .sum()
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -253,6 +305,22 @@ fn closure_uniform_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
             })
             .sum(),
+        ComputeMethod::SimpsonsThird => {
+            let indices: Vec<_> = (0..*n_step - 4).collect();
+            (*step / X::from(3.0).unwrap())
+                * indices
+                    .windows(3)
+                    .map(|is| {
+                        let [i, ip1, ip2] = is else {
+                            unreachable!();
+                        };
+                        closure(*start + *step * X::from(*i).unwrap())
+                            + X::from(4.0).unwrap()
+                                * closure(*start + *step * X::from(*ip1).unwrap())
+                            + closure(*start + *step * X::from(*ip2).unwrap())
+                    })
+                    .sum()
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
