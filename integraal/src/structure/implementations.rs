@@ -145,6 +145,10 @@ fn values_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
+        #[cfg(feature = "romberg")] // FIXME: replace by an error
+        ComputeMethod::Romberg => {
+            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -204,6 +208,10 @@ fn values_uniform_arm<X: Scalar>(
                     })
                     .sum()
         }
+        #[cfg(feature = "romberg")]
+        ComputeMethod::Romberg => {
+            todo!();
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -258,6 +266,10 @@ fn closure_explicit_arm<X: Scalar>(
                             + c_ip2 * closure(args[*ip2]))
                 })
                 .sum()
+        }
+        #[cfg(feature = "romberg")] // FIXME: replace by an error
+        ComputeMethod::Romberg => {
+            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
@@ -320,6 +332,10 @@ fn closure_uniform_arm<X: Scalar>(
                             + closure(*start + *step * X::from(*ip2).unwrap())
                     })
                     .sum()
+        }
+        #[cfg(feature = "romberg")]
+        ComputeMethod::Romberg => {
+            todo!();
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {

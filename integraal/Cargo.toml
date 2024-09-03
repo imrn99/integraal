@@ -16,6 +16,7 @@ keywords = ["algorithms", "analysis", "integration", "numerical-analysis", "nume
 
 [features]
 montecarlo = ["dep:rand"]
+romberg = []
 
 # DEPS
 
