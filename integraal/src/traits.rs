@@ -14,6 +14,7 @@ pub trait Scalar:
     + num_traits::FromPrimitive
     + std::ops::Sub<Output = Self>
     + std::ops::Mul<Output = Self>
+    + std::ops::MulAssign
     + std::iter::Sum
 {
 }
@@ -27,6 +28,7 @@ impl<
             + num_traits::FromPrimitive
             + std::ops::Sub<Output = Self>
             + std::ops::Mul<Output = Self>
+            + std::ops::MulAssign
             + std::iter::Sum,
     > Scalar for X
 {
