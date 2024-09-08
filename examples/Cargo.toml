@@ -12,7 +12,7 @@ categories = ["algorithms", "concurrency", "mathematics", "science"]
 keywords = ["algorithms", "analysis", "integration", "numerical-analysis", "numerical-method"]
 
 [dependencies]
-integraal = { workspace = true, features = ["montecarlo"] }
+integraal = { workspace = true, features = ["montecarlo", "romberg"] }
 rand = { workspace = true, features = ["small_rng"] }
 
 # EXAMPLES

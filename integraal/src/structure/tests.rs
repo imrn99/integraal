@@ -381,6 +381,40 @@ mod a_simpsons3rd {
     );
 }
 
+#[cfg(feature = "romberg")]
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+mod a_romberg {
+    use super::*;
+
+    generate_test!(
+        ClosureUniform,
+        FunctionDescriptor::Closure(Box::new(f64::sin)),
+        DomainDescriptor::Uniform {
+            start: 0.,
+            step: STEP,
+            n_step: (1000. * std::f64::consts::PI) as usize,
+        },
+        ComputeMethod::Romberg { max_steps: 10 },
+        TRAPEZOID_TOLERANCE // FIXME: update tol
+    );
+
+    generate_test!(
+        ValuesUniform,
+        FunctionDescriptor::Values(
+            (0..(1000. * std::f64::consts::PI) as usize)
+                .map(|step_id| (step_id as f64 * STEP).sin())
+                .collect()
+        ),
+        DomainDescriptor::Uniform {
+            start: 0.,
+            step: STEP,
+            n_step: (1000. * std::f64::consts::PI) as usize,
+        },
+        ComputeMethod::Romberg { max_steps: 10 },
+        TRAPEZOID_TOLERANCE // FIXME: update tol
+    );
+}
+
 // integral B
 // y = f(x) = x from -1 to 1
 

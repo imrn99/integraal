@@ -145,6 +145,10 @@ fn values_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
+        #[cfg(feature = "romberg")] // FIXME: replace by an error
+        ComputeMethod::Romberg { .. } => {
+            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -154,13 +158,14 @@ fn values_explicit_arm<X: Scalar>(
     Ok(res)
 }
 
+#[allow(clippy::cast_possible_truncation)]
 fn values_uniform_arm<X: Scalar>(
     vals: &[X],
     domain: &DomainDescriptor<X>,
     method: &ComputeMethod,
 ) -> Result<X, IntegraalError> {
     let DomainDescriptor::Uniform {
-        start: _,
+        start,
         step,
         n_step,
     } = domain
@@ -203,6 +208,40 @@ fn values_uniform_arm<X: Scalar>(
                         vals[*i] + X::from(4.0).unwrap() * vals[*ip1] + vals[*ip2]
                     })
                     .sum()
+        }
+        #[cfg(feature = "romberg")]
+        ComputeMethod::Romberg { max_steps } => {
+            let (mut r1, mut r2) = (vec![X::zero(); *max_steps], vec![X::zero(); *max_steps]);
+            let end = *start + X::from(*n_step).unwrap() * *step;
+            let half = X::from(0.5).unwrap();
+            let mut h = end - *start;
+
+            r1[0] = half * h * (vals[0] + vals[*n_step - 1]);
+
+            // since we dont take desired accuracy as an arg, we don't need early returns
+            // => the loop is written with an iterator instead of a regular for
+            (1..*max_steps).for_each(|i| {
+                let (rp, rc) = if i % 2 == 0 {
+                    (&mut r2, &mut r1)
+                } else {
+                    (&mut r1, &mut r2)
+                };
+
+                h *= half;
+                let ep = 2_usize.pow(i as u32 - 1);
+                let c = (1..=ep).map(|j| vals[2 * j - 1]).sum::<X>();
+                rc[0] = h * c + half * rp[0];
+
+                (1..=i).for_each(|j| {
+                    let n_k = X::from(4_u32.pow(j as u32)).unwrap();
+                    rc[j] = (n_k * rc[j - 1] - rp[j - 1]) / (n_k - X::one());
+                });
+            });
+            if *n_step % 2 == 0 {
+                r1[*max_steps - 1]
+            } else {
+                r2[*max_steps - 1]
+            }
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
@@ -259,6 +298,10 @@ fn closure_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
+        #[cfg(feature = "romberg")] // FIXME: replace by an error
+        ComputeMethod::Romberg { .. } => {
+            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+        }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
             todo!()
@@ -267,7 +310,7 @@ fn closure_explicit_arm<X: Scalar>(
     Ok(res)
 }
 
-#[allow(clippy::unnecessary_wraps)]
+#[allow(clippy::unnecessary_wraps, clippy::cast_possible_truncation)]
 fn closure_uniform_arm<X: Scalar>(
     closure: impl Fn(X) -> X,
     domain: &DomainDescriptor<X>,
@@ -320,6 +363,44 @@ fn closure_uniform_arm<X: Scalar>(
                             + closure(*start + *step * X::from(*ip2).unwrap())
                     })
                     .sum()
+        }
+        #[cfg(feature = "romberg")]
+        ComputeMethod::Romberg { max_steps } => {
+            let (mut r1, mut r2) = (vec![X::zero(); *max_steps], vec![X::zero(); *max_steps]);
+            let end = *start + X::from(*n_step).unwrap() * *step;
+            let half = X::from(0.5).unwrap();
+            let mut h = end - *start;
+
+            r1[0] = half
+                * h
+                * (closure(*start) + closure(*start + X::from(*n_step - 1).unwrap() * *step));
+
+            // since we dont take desired accuracy as an arg, we don't need early returns
+            // => the loop is written with an iterator instead of a regular for
+            (1..*max_steps).for_each(|i| {
+                let (rp, rc) = if i % 2 == 0 {
+                    (&mut r2, &mut r1)
+                } else {
+                    (&mut r1, &mut r2)
+                };
+
+                h *= half;
+                let ep = 2_usize.pow(i as u32 - 1);
+                let c = (1..=ep)
+                    .map(|j| closure(*start + X::from(2 * j - 1).unwrap() * *step))
+                    .sum::<X>();
+                rc[0] = h * c + half * rp[0];
+
+                (1..=i).for_each(|j| {
+                    let n_k = X::from(4_u32.pow(j as u32)).unwrap();
+                    rc[j] = (n_k * rc[j - 1] - rp[j - 1]) / (n_k - X::one());
+                });
+            });
+            if *max_steps % 2 == 0 {
+                r1[*max_steps - 1]
+            } else {
+                r2[*max_steps - 1]
+            }
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {

@@ -70,6 +70,12 @@ pub enum ComputeMethod {
     /// Simpson's third rule [reference](https://en.wikipedia.org/wiki/Simpson%27s_rule),
     /// [issue](https://github.com/imrn99/integraal/issues/23)
     SimpsonsThird,
+    /// Romberg's method [reference](https://en.wikipedia.org/wiki/Romberg%27s_method#Implementation)
+    #[cfg(feature = "romberg")]
+    Romberg {
+        /// Maximum number of iteration done by the algorithm
+        max_steps: usize,
+    },
     #[cfg(feature = "montecarlo")]
     /// Monte-Carlo method [reference](https://en.wikipedia.org/wiki/Monte_Carlo_integration)
     MonteCarlo {
