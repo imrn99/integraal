@@ -220,7 +220,7 @@ fn values_uniform_arm<X: Scalar>(
 
             // since we dont take desired accuracy as an arg, we don't need early returns
             // => the loop is written with an iterator instead of a regular for
-            (1..*n_step).for_each(|i| {
+            (1..*max_steps).for_each(|i| {
                 let (rp, rc) = if i % 2 == 0 {
                     (&mut r2, &mut r1)
                 } else {
@@ -238,9 +238,9 @@ fn values_uniform_arm<X: Scalar>(
                 });
             });
             if *n_step % 2 == 0 {
-                r1[*n_step - 1]
+                r1[*max_steps - 1]
             } else {
-                r2[*n_step - 1]
+                r2[*max_steps - 1]
             }
         }
         #[cfg(feature = "montecarlo")]
@@ -377,7 +377,7 @@ fn closure_uniform_arm<X: Scalar>(
 
             // since we dont take desired accuracy as an arg, we don't need early returns
             // => the loop is written with an iterator instead of a regular for
-            (1..*n_step).for_each(|i| {
+            (1..*max_steps).for_each(|i| {
                 let (rp, rc) = if i % 2 == 0 {
                     (&mut r2, &mut r1)
                 } else {
@@ -396,10 +396,10 @@ fn closure_uniform_arm<X: Scalar>(
                     rc[j] = (n_k * rc[j - 1] - rp[j - 1]) / (n_k - X::one());
                 });
             });
-            if *n_step % 2 == 0 {
-                r1[*n_step - 1]
+            if *max_steps % 2 == 0 {
+                r1[*max_steps - 1]
             } else {
-                r2[*n_step - 1]
+                r2[*max_steps - 1]
             }
         }
         #[cfg(feature = "montecarlo")]
