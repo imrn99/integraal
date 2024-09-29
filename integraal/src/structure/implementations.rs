@@ -145,6 +145,10 @@ fn values_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
+        ComputeMethod::Boole => {
+            // FIXME: replace by an error
+            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+        }
         #[cfg(feature = "romberg")] // FIXME: replace by an error
         ComputeMethod::Romberg { .. } => {
             unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
@@ -208,6 +212,30 @@ fn values_uniform_arm<X: Scalar>(
                         vals[*i] + X::from(4.0).unwrap() * vals[*ip1] + vals[*ip2]
                     })
                     .sum()
+        }
+        ComputeMethod::Boole => {
+            // FIXME: replace with an error
+            assert_eq!(
+                *n_step % 4,
+                0,
+                "E: domain should be divided into a multiple of 4 segments for Boole's method"
+            );
+            let c = X::from(2.0 / 45.0).unwrap() * *step;
+
+            let m1 = X::from(7.0).unwrap() * (vals[0] + vals[*n_step - 1]);
+
+            let c1 = X::from(14.0).unwrap();
+            let c2 = X::from(12.0).unwrap();
+            let c3 = X::from(32.0).unwrap();
+            let m2: X = (1..*n_step - 1)
+                .map(|id| match id % 4 {
+                    0 => c1 * vals[id],     // multiple of 4
+                    2 => c2 * vals[id],     // pair, non-multiple of 4
+                    1 | 3 => c3 * vals[id], // odd
+                    _ => unreachable!(),
+                })
+                .sum();
+            c * (m1 + m2)
         }
         #[cfg(feature = "romberg")]
         ComputeMethod::Romberg { max_steps } => {
@@ -298,6 +326,10 @@ fn closure_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
+        ComputeMethod::Boole => {
+            // FIXME: replace by an error
+            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+        }
         #[cfg(feature = "romberg")] // FIXME: replace by an error
         ComputeMethod::Romberg { .. } => {
             unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
@@ -310,7 +342,11 @@ fn closure_explicit_arm<X: Scalar>(
     Ok(res)
 }
 
-#[allow(clippy::unnecessary_wraps, clippy::cast_possible_truncation)]
+#[allow(
+    clippy::unnecessary_wraps,
+    clippy::cast_possible_truncation,
+    clippy::too_many_lines
+)]
 fn closure_uniform_arm<X: Scalar>(
     closure: impl Fn(X) -> X,
     domain: &DomainDescriptor<X>,
@@ -363,6 +399,31 @@ fn closure_uniform_arm<X: Scalar>(
                             + closure(*start + *step * X::from(*ip2).unwrap())
                     })
                     .sum()
+        }
+        ComputeMethod::Boole => {
+            // FIXME: replace with an error
+            assert_eq!(
+                *n_step % 4,
+                0,
+                "E: domain should be divided into a multiple of 4 segments for Boole's method"
+            );
+            let c = X::from(2.0 / 45.0).unwrap() * *step;
+
+            let m1 = X::from(7.0).unwrap()
+                * (closure(*start) + closure(*start + X::from(*n_step - 1).unwrap() * *step));
+
+            let c1 = X::from(14.0).unwrap();
+            let c2 = X::from(12.0).unwrap();
+            let c3 = X::from(32.0).unwrap();
+            let m2: X = (1..*n_step - 1)
+                .map(|id| match id % 4 {
+                    0 => c1 * closure(*start + X::from(id).unwrap() * *step), // multiple of 4
+                    2 => c2 * closure(*start + X::from(id).unwrap() * *step), // pair, non-multiple of 4
+                    1 | 3 => c3 * closure(*start + X::from(id).unwrap() * *step), // odd
+                    _ => unreachable!(),
+                })
+                .sum();
+            c * (m1 + m2)
         }
         #[cfg(feature = "romberg")]
         ComputeMethod::Romberg { max_steps } => {
