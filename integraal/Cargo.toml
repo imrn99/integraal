@@ -15,6 +15,7 @@ keywords = ["algorithms", "analysis", "integration", "numerical-analysis", "nume
 # FEATURES
 
 [features]
+boole = []
 montecarlo = ["dep:rand"] # gated because of additional dep
 romberg = []              # gated because it is not implemented for all input kinds
 

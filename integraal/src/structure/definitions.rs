@@ -9,10 +9,14 @@ use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Scalar};
 /// Integral error
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum IntegraalError {
-    /// One or more parameters are missing.
-    MissingParameters(&'static str),
+    /// Some parameters do not fit the requirements of the computation method.
+    BadParameters(&'static str),
     /// Specified parameters are conflicting or ambiguous.
     InconsistentParameters(&'static str),
+    /// One or more parameters are missing.
+    MissingParameters(&'static str),
+    /// A given method isn't implemented for the specified parameters (e.g. due to requirements).
+    Unimplemented(&'static str),
 }
 
 /// Main integral computation structure
