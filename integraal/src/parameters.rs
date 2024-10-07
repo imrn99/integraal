@@ -67,8 +67,8 @@ pub enum ComputeMethod {
     RectangleRight,
     /// Trapezoid method -- [reference](https://en.wikipedia.org/wiki/Trapezoidal_rule)
     Trapezoid,
-    /// Simpson's rule(s) -- [reference](https://en.wikipedia.org/wiki/Simpson%27s_rule),
-    /// [issue](https://github.com/imrn99/integraal/issues/23)
+    /// Simpson's rule(s), the exact rule applied depends on integral definition --
+    /// [reference](https://en.wikipedia.org/wiki/Simpson%27s_rule)
     Simpson,
     /// Boole's method -- [reference](https://en.wikipedia.org/wiki/Boole%27s_rule#Composite_Boole's_Rule)
     Boole,
