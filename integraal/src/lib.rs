@@ -19,6 +19,7 @@
 //!
 //! ## Feature list
 //!
+//! - `boole` -- enable the Boole computation method.
 //! - `montecarlo` -- enable the Monte-Carlo computation method.
 //! - `romberg` -- enable the Romberg computation method.
 //!

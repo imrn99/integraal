@@ -145,9 +145,9 @@ fn values_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
+        #[cfg(feature = "boole")] // FIXME: replace by an error
         ComputeMethod::Boole => {
-            // FIXME: replace by an error
-            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+            unimplemented!("E: Boole's method isn't implemented for non-uniform domains");
         }
         #[cfg(feature = "romberg")] // FIXME: replace by an error
         ComputeMethod::Romberg { .. } => {
@@ -326,9 +326,9 @@ fn closure_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
+        #[cfg(feature = "boole")] // FIXME: replace by an error
         ComputeMethod::Boole => {
-            // FIXME: replace by an error
-            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+            unimplemented!("E: Boole's method isn't implemented for non-uniform domains");
         }
         #[cfg(feature = "romberg")] // FIXME: replace by an error
         ComputeMethod::Romberg { .. } => {

@@ -381,6 +381,7 @@ mod a_simpsons3rd {
     );
 }
 
+#[cfg(feature = "boole")]
 #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 mod a_boole {
     use super::*;
