@@ -145,13 +145,17 @@ fn values_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
-        #[cfg(feature = "boole")] // FIXME: replace by an error
+        #[cfg(feature = "boole")]
         ComputeMethod::Boole => {
-            unimplemented!("E: Boole's method isn't implemented for non-uniform domains");
+            return Err(IntegraalError::Unimplemented(
+                "Boole's method isn't implemented for non-uniform domains",
+            ));
         }
-        #[cfg(feature = "romberg")] // FIXME: replace by an error
+        #[cfg(feature = "romberg")]
         ComputeMethod::Romberg { .. } => {
-            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+            return Err(IntegraalError::Unimplemented(
+                "Romberg's method isn't implemented for non-uniform domains",
+            ));
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
@@ -214,12 +218,12 @@ fn values_uniform_arm<X: Scalar>(
                     .sum()
         }
         ComputeMethod::Boole => {
-            // FIXME: replace with an error
-            assert_eq!(
-                *n_step % 4,
-                0,
-                "E: domain should be divided into a multiple of 4 segments for Boole's method"
-            );
+            if *n_step % 4 != 0 {
+                return Err(IntegraalError::BadParameters(
+                    "domain should be divided into a multiple of 4 segments for Boole's method",
+                ));
+            }
+
             let c = X::from(2.0 / 45.0).unwrap() * *step;
 
             let m1 = X::from(7.0).unwrap() * (vals[0] + vals[*n_step - 1]);
@@ -326,13 +330,17 @@ fn closure_explicit_arm<X: Scalar>(
                 })
                 .sum()
         }
-        #[cfg(feature = "boole")] // FIXME: replace by an error
+        #[cfg(feature = "boole")]
         ComputeMethod::Boole => {
-            unimplemented!("E: Boole's method isn't implemented for non-uniform domains");
+            return Err(IntegraalError::Unimplemented(
+                "Boole's method isn't implemented for non-uniform domains",
+            ));
         }
-        #[cfg(feature = "romberg")] // FIXME: replace by an error
+        #[cfg(feature = "romberg")]
         ComputeMethod::Romberg { .. } => {
-            unimplemented!("E: Romberg's method isn't implemented for non-uniform domains");
+            return Err(IntegraalError::Unimplemented(
+                "Romberg's method isn't implemented for non-uniform domains",
+            ));
         }
         #[cfg(feature = "montecarlo")]
         ComputeMethod::MonteCarlo { n_sample: _ } => {
@@ -401,12 +409,12 @@ fn closure_uniform_arm<X: Scalar>(
                     .sum()
         }
         ComputeMethod::Boole => {
-            // FIXME: replace with an error
-            assert_eq!(
-                *n_step % 4,
-                0,
-                "E: domain should be divided into a multiple of 4 segments for Boole's method"
-            );
+            if *n_step % 4 != 0 {
+                return Err(IntegraalError::BadParameters(
+                    "domain should be divided into a multiple of 4 segments for Boole's method",
+                ));
+            }
+
             let c = X::from(2.0 / 45.0).unwrap() * *step;
 
             let m1 = X::from(7.0).unwrap()
