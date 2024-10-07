@@ -125,7 +125,7 @@ fn values_explicit_arm<X: Scalar>(
                 (y1.min(y2) + num_traits::abs(y1 - y2) / X::from_f32(2.0).unwrap()) * step
             })
             .sum(),
-        ComputeMethod::SimpsonsThird => {
+        ComputeMethod::Simpson => {
             // using the formula for irregularly spaced data:
             // https://en.wikipedia.org/wiki/Simpson%27s_rule#Composite_Simpson's_rule_for_irregularly_spaced_data
             // the formula is a sum from 0 to N-2, N the number of subintervals; so N = n_sample-1
@@ -200,7 +200,7 @@ fn values_uniform_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
             })
             .sum(),
-        ComputeMethod::SimpsonsThird => {
+        ComputeMethod::Simpson => {
             let indices: Vec<_> = (0..*n_step - 4).collect();
             (*step / X::from(3.0).unwrap())
                 * indices
@@ -307,7 +307,7 @@ fn closure_explicit_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * step
             })
             .sum(),
-        ComputeMethod::SimpsonsThird => {
+        ComputeMethod::Simpson => {
             let indices: Vec<_> = (0..args.len() - 4).collect();
             indices
                 .windows(3)
@@ -384,7 +384,7 @@ fn closure_uniform_arm<X: Scalar>(
                 (y1.min(y2) + (y1 - y2).abs() / X::from_f32(2.0).unwrap()) * *step
             })
             .sum(),
-        ComputeMethod::SimpsonsThird => {
+        ComputeMethod::Simpson => {
             let indices: Vec<_> = (0..*n_step - 4).collect();
             (*step / X::from(3.0).unwrap())
                 * indices

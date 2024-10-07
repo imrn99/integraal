@@ -337,7 +337,7 @@ mod a_simpsons3rd {
             .collect(),
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Explicit(&domain),
-        ComputeMethod::SimpsonsThird,
+        ComputeMethod::Simpson,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
@@ -349,7 +349,7 @@ mod a_simpsons3rd {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::SimpsonsThird,
+        ComputeMethod::Simpson,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
@@ -360,7 +360,7 @@ mod a_simpsons3rd {
             .collect(),
         FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect()),
         DomainDescriptor::Explicit(&domain),
-        ComputeMethod::SimpsonsThird,
+        ComputeMethod::Simpson,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
@@ -376,7 +376,7 @@ mod a_simpsons3rd {
             step: STEP,
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
-        ComputeMethod::SimpsonsThird,
+        ComputeMethod::Simpson,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 }
