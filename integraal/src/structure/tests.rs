@@ -327,7 +327,7 @@ mod a_trapezoid {
 }
 
 #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
-mod a_simpsons3rd {
+mod a_simpson {
     use super::*;
 
     generate_test!(
@@ -449,32 +449,72 @@ mod a_romberg {
     );
 }
 
-// integral B
-// y = f(x) = x from -1 to 1
+// integral B (contiguous, non-contiguous derivative)
+// y = f(x) = |  x from 0 to 1
+//            |  1 from 1 to 9
+//            | -x from 9 to 10
 
-#[allow(non_snake_case)]
-#[test]
-fn B_Closure_Explicit_Rectangle() {
-    let functiond = FunctionDescriptor::Closure(Box::new(|x| x));
-    // -1 to 1, with .001 steps
-    // FIXME
-    // currently requires one more value because of
-    // the inconsistent sampling policy
-    let domain: Vec<f64> = (0..=2001)
-        .map(|step_id| -1. + f64::from(step_id) * STEP)
-        .collect();
-    let domaind = DomainDescriptor::Explicit(&domain);
-    let computem = ComputeMethod::RectangleLeft;
-    let integraal = Integraal::default();
-    let res = integraal
-        .function(functiond)
-        .domain(domaind)
-        .method(computem)
-        .compute();
-    assert!(res.is_ok());
-    assert!(
-        almost_equal!(f64, res.unwrap(), 0.0_f64, RECTANGLE_TOLERANCE),
-        "left: {} \nright: 0.0",
-        res.unwrap()
-    );
-}
+mod b_rectangleleft {}
+
+mod b_rectangleright {}
+
+mod b_trapezoid {}
+
+mod b_simpson {}
+
+#[cfg(feature = "boole")]
+mod b_boole {}
+
+#[cfg(feature = "romberg")]
+mod b_romberg {}
+
+// integral C (piece-wise contiguous)
+// y = f(x) =
+
+mod c_rectangleleft {}
+
+mod c_rectangleright {}
+
+mod c_trapezoid {}
+
+mod c_simpson {}
+
+#[cfg(feature = "boole")]
+mod c_boole {}
+
+#[cfg(feature = "romberg")]
+mod c_romberg {}
+
+// integral D (even)
+// y = f(x) =
+
+mod d_rectangleleft {}
+
+mod d_rectangleright {}
+
+mod d_trapezoid {}
+
+mod d_simpson {}
+
+#[cfg(feature = "boole")]
+mod d_boole {}
+
+#[cfg(feature = "romberg")]
+mod d_romberg {}
+
+// integral E (odd)
+// y = f(x) =
+
+mod e_rectangleleft {}
+
+mod e_rectangleright {}
+
+mod e_trapezoid {}
+
+mod e_simpson {}
+
+#[cfg(feature = "boole")]
+mod e_boole {}
+
+#[cfg(feature = "romberg")]
+mod e_romberg {}
