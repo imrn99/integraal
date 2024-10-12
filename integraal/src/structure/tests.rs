@@ -116,6 +116,7 @@ macro_rules! almost_equal {
 
 // integral A
 // y = f(x) = sin(x) from 0 to PI
+// expected value = 2
 
 macro_rules! generate_test {
     ($name: ident, $dm: stmt, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
@@ -450,9 +451,10 @@ mod a_romberg {
 }
 
 // integral B (contiguous, non-contiguous derivative)
-// y = f(x) = |  x from 0 to 1
-//            |  1 from 1 to 9
-//            | -x from 9 to 10
+// y = f(x) = |  x     from 0 to 1
+//            |  1     from 1 to 2
+//            | -x + 3 from 2 to 3
+// expected value = 2
 
 mod b_rectangleleft {}
 
@@ -469,7 +471,10 @@ mod b_boole {}
 mod b_romberg {}
 
 // integral C (piece-wise contiguous)
-// y = f(x) =
+// y = f(x) = | 0 from 0 to 1
+//            | 1 from 1 to 1.5
+//            | 0 from 1.5 to 2
+// expected value = 0.5
 
 mod c_rectangleleft {}
 
@@ -486,7 +491,8 @@ mod c_boole {}
 mod c_romberg {}
 
 // integral D (even)
-// y = f(x) =
+// y = f(x) = x^2 from -4 to 4
+// expected value = 128/3
 
 mod d_rectangleleft {}
 
@@ -503,7 +509,8 @@ mod d_boole {}
 mod d_romberg {}
 
 // integral E (odd)
-// y = f(x) =
+// y = f(x) = x^3 from -4 to 4
+// expected value = 0
 
 mod e_rectangleleft {}
 
