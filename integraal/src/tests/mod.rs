@@ -274,7 +274,7 @@ macro_rules! all_tests {
                 $dmd_xpl,
                 ComputeMethod::Simpson,
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                SIMPSON_TOLERANCE
             );
 
             generate_test!(
@@ -284,7 +284,7 @@ macro_rules! all_tests {
                 $dmd_uni,
                 ComputeMethod::Simpson,
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                SIMPSON_TOLERANCE
             );
 
             generate_test!(
@@ -295,7 +295,7 @@ macro_rules! all_tests {
                 $dmd_xpl,
                 ComputeMethod::Simpson,
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                SIMPSON_TOLERANCE
             );
 
             generate_test!(
@@ -305,7 +305,7 @@ macro_rules! all_tests {
                 $dmd_uni,
                 ComputeMethod::Simpson,
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                SIMPSON_TOLERANCE
             );
         }
 
@@ -321,7 +321,7 @@ macro_rules! all_tests {
                 $dmd_uni,
                 ComputeMethod::Boole { force: true },
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                BOOLE_TOLERANCE
             );
 
             generate_test!(
@@ -331,7 +331,7 @@ macro_rules! all_tests {
                 $dmd_uni,
                 ComputeMethod::Boole { force: true },
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                BOOLE_TOLERANCE
             );
         }
 
@@ -347,7 +347,7 @@ macro_rules! all_tests {
                 $dmd_uni,
                 ComputeMethod::Romberg { max_steps: 10 },
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                ROMBERG_TOLERANCE
             );
 
             generate_test!(
@@ -357,7 +357,7 @@ macro_rules! all_tests {
                 $dmd_uni,
                 ComputeMethod::Romberg { max_steps: 10 },
                 RES,
-                TRAPEZOID_TOLERANCE // FIXME: update tol
+                ROMBERG_TOLERANCE
             );
         }
     };

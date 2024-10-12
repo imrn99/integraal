@@ -14,8 +14,12 @@ mod double {
     const STEP: f64 = 0.001;
     const RES: f64 = 0.5;
 
+    // FIXME: tolerances need to be updated
     const RECTANGLE_TOLERANCE: f64 = 1e-5;
     const TRAPEZOID_TOLERANCE: f64 = 1e-5;
+    const SIMPSON_TOLERANCE: f64 = 1e-5;
+    const BOOLE_TOLERANCE: f64 = 1e-5;
+    const ROMBERG_TOLERANCE: f64 = 1e-5;
 
     all_tests!(
         f64,
@@ -52,8 +56,12 @@ mod simple {
     const STEP: f32 = 0.001;
     const RES: f32 = 0.5;
 
+    // FIXME: tolerances need to be updated
     const RECTANGLE_TOLERANCE: f32 = 1e-5;
     const TRAPEZOID_TOLERANCE: f32 = 1e-5;
+    const SIMPSON_TOLERANCE: f32 = 1e-5;
+    const BOOLE_TOLERANCE: f32 = 1e-5;
+    const ROMBERG_TOLERANCE: f32 = 1e-5;
 
     all_tests!(
         f32,
