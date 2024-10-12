@@ -109,4 +109,258 @@ macro_rules! generate_test {
     };
 }
 
-pub(crate) use {almost_equal, generate_test};
+macro_rules! all_tests {
+    (
+      $ft: ty,           // float type
+      $dm: stmt,         // domain
+      $fnd_cls: expr,    // function descriptor (closure)
+      $fnd_val: expr,    // function descriptor (values)
+      $dmd_xpl: expr,    // domain descriptor (explicit)
+      $dmd_uni: expr,    // domain descriptor (uniform)
+      // $met: expr,     // compute method
+      // $res: ident,    // expected result
+      // $tol: ident     // tolerance
+    ) => {
+        #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+        mod rectangle_left {
+            use super::*;
+
+            generate_test!(
+                $ft,
+                ClosureExplicit,
+                $dm,
+                $fnd_cls,
+                $dmd_xpl,
+                ComputeMethod::RectangleLeft,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ClosureUniform,
+                $fnd_cls,
+                $dmd_uni,
+                ComputeMethod::RectangleLeft,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesExplicit,
+                $dm,
+                $fnd_val,
+                $dmd_xpl,
+                ComputeMethod::RectangleLeft,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesUniform,
+                $fnd_val,
+                $dmd_uni,
+                ComputeMethod::RectangleLeft,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+        }
+
+        #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+        mod rectangle_right {
+            use super::*;
+
+            generate_test!(
+                $ft,
+                ClosureExplicit,
+                $dm,
+                $fnd_cls,
+                $dmd_xpl,
+                ComputeMethod::RectangleRight,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ClosureUniform,
+                $fnd_cls,
+                $dmd_uni,
+                ComputeMethod::RectangleRight,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesExplicit,
+                $dm,
+                $fnd_val,
+                $dmd_xpl,
+                ComputeMethod::RectangleRight,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesUniform,
+                $fnd_val,
+                $dmd_uni,
+                ComputeMethod::RectangleRight,
+                RES,
+                RECTANGLE_TOLERANCE
+            );
+        }
+
+        #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+        mod trapezoid {
+            use super::*;
+
+            generate_test!(
+                $ft,
+                ClosureExplicit,
+                $dm,
+                $fnd_cls,
+                $dmd_xpl,
+                ComputeMethod::Trapezoid,
+                RES,
+                TRAPEZOID_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ClosureUniform,
+                $fnd_cls,
+                $dmd_uni,
+                ComputeMethod::Trapezoid,
+                RES,
+                TRAPEZOID_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesExplicit,
+                $dm,
+                $fnd_val,
+                $dmd_xpl,
+                ComputeMethod::Trapezoid,
+                RES,
+                TRAPEZOID_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesUniform,
+                $fnd_val,
+                $dmd_uni,
+                ComputeMethod::Trapezoid,
+                RES,
+                TRAPEZOID_TOLERANCE
+            );
+        }
+
+        #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+        mod simpson {
+            use super::*;
+
+            generate_test!(
+                $ft,
+                ClosureExplicit,
+                $dm,
+                $fnd_cls,
+                $dmd_xpl,
+                ComputeMethod::Simpson,
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+
+            generate_test!(
+                $ft,
+                ClosureUniform,
+                $fnd_cls,
+                $dmd_uni,
+                ComputeMethod::Simpson,
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+
+            generate_test!(
+                $ft,
+                ValuesExplicit,
+                $dm,
+                $fnd_val,
+                $dmd_xpl,
+                ComputeMethod::Simpson,
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+
+            generate_test!(
+                $ft,
+                ValuesUniform,
+                $fnd_val,
+                $dmd_uni,
+                ComputeMethod::Simpson,
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+        }
+
+        #[cfg(feature = "boole")]
+        #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+        mod boole {
+            use super::*;
+
+            generate_test!(
+                $ft,
+                ClosureUniform,
+                $fnd_cls,
+                $dmd_uni,
+                ComputeMethod::Boole,
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+
+            generate_test!(
+                $ft,
+                ValuesUniform,
+                $fnd_val,
+                $dmd_uni,
+                ComputeMethod::Boole,
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+        }
+
+        #[cfg(feature = "romberg")]
+        #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+        mod romberg {
+            use super::*;
+
+            generate_test!(
+                $ft,
+                ClosureUniform,
+                $fnd_cls,
+                $dmd_uni,
+                ComputeMethod::Romberg { max_steps: 10 },
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+
+            generate_test!(
+                $ft,
+                ValuesUniform,
+                $fnd_val,
+                $dmd_uni,
+                ComputeMethod::Romberg { max_steps: 10 },
+                RES,
+                TRAPEZOID_TOLERANCE // FIXME: update tol
+            );
+        }
+    };
+}
+
+pub(crate) use {all_tests, almost_equal, generate_test};
