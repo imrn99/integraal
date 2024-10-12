@@ -23,19 +23,19 @@ mod double {
             .map(|step_id| f64::from(step_id) * STEP)
             .collect(),
         FunctionDescriptor::Closure(
-            Box::new(|x: f64|
-                if x < 1.0 { x }
-                else if x < 2.0 { 1.0 }
-                else if x < 3.0 { 3.0 - x }
+            Box::new(|x|
+                if      (0.0..1.0).contains(&x) { x }
+                else if (1.0..2.0).contains(&x) { 1.0 }
+                else if (2.0..3.0).contains(&x) { 3.0 - x }
                 else { 0.0 })
         ),
         FunctionDescriptor::Values(
             (0..3000)
                 .map(|step_id| {
                     let x = f64::from(step_id) * STEP;
-                    if x < 1.0 { x }
-                    else if x < 2.0 { 1.0 }
-                    else if x < 3.0 { 3.0 - x }
+                    if      (0.0..1.0).contains(&x) { x }
+                    else if (1.0..2.0).contains(&x) { 1.0 }
+                    else if (2.0..3.0).contains(&x) { 3.0 - x }
                     else { 0.0 }
                 })
                 .collect()
