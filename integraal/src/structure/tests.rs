@@ -104,7 +104,7 @@ macro_rules! almost_equal {
     ($ft: ty, $v1: expr, $v2: expr) => {
         ($v1 - $v2).abs() < ($v1.abs() + $v2.abs()).min(<$ft as num_traits::Float>::max_value())
     };
-    ($ft: ty,$v1: expr, $v2: expr, $tol: ident) => {
+    ($ft: ty, $v1: expr, $v2: expr, $tol: ident) => {
         ($v1 - $v2).abs()
             < ($v1.abs() + $v2.abs()).min(<$ft as num_traits::Float>::max_value()) + $tol
     };
@@ -116,10 +116,11 @@ macro_rules! almost_equal {
 
 // integral A
 // y = f(x) = sin(x) from 0 to PI
-// expected value = 2
+
+const A_RES: f64 = 2.0;
 
 macro_rules! generate_test {
-    ($name: ident, $dm: stmt, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
+    ($ft: ty, $name: ident, $dm: stmt, $fnd: expr, $dmd: expr, $met: expr, $res: ident, $tol: ident) => {
         #[allow(non_snake_case)]
         #[test]
         fn $name() {
@@ -135,13 +136,14 @@ macro_rules! generate_test {
             let res = integraal.compute();
             assert!(res.is_ok());
             assert!(
-                almost_equal!(f64, res.unwrap(), 2.0_f64, $tol),
-                "left: {} \nright: 2.0",
-                res.unwrap()
+                almost_equal!($ft, res.unwrap(), $res, $tol),
+                "left: {} \nright: {}",
+                res.unwrap(),
+                $res,
             );
         }
     };
-    ($name: ident, $fnd: expr, $dmd: expr, $met: expr, $tol: ident) => {
+    ($ft: ty, $name: ident, $fnd: expr, $dmd: expr, $met: expr, $res: ident, $tol: ident) => {
         #[allow(non_snake_case)]
         #[test]
         fn $name() {
@@ -154,7 +156,7 @@ macro_rules! generate_test {
                 .method(computem);
             let res = integraal.compute().unwrap();
             assert!(
-                almost_equal!(f64, res, 2.0_f64, $tol),
+                almost_equal!($ft, res, $res, $tol),
                 "computed value: {res:?}\nexpected value: 2.0\ntolerance: {:?}",
                 $tol
             );
@@ -167,6 +169,7 @@ mod a_rectangleleft {
     use super::*;
 
     generate_test!(
+        f64,
         ClosureExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -174,10 +177,12 @@ mod a_rectangleleft {
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::RectangleLeft,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ClosureUniform,
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Uniform {
@@ -186,10 +191,12 @@ mod a_rectangleleft {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::RectangleLeft,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ValuesExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -197,10 +204,12 @@ mod a_rectangleleft {
         FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect()),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::RectangleLeft,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ValuesUniform,
         FunctionDescriptor::Values(
             (0..(1000. * std::f64::consts::PI) as usize)
@@ -213,6 +222,7 @@ mod a_rectangleleft {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::RectangleLeft,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 }
@@ -222,6 +232,7 @@ mod a_rectangleright {
     use super::*;
 
     generate_test!(
+        f64,
         ClosureExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -229,10 +240,12 @@ mod a_rectangleright {
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::RectangleRight,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ClosureUniform,
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Uniform {
@@ -241,10 +254,12 @@ mod a_rectangleright {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::RectangleRight,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ValuesExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -252,10 +267,12 @@ mod a_rectangleright {
         FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect()),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::RectangleRight,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ValuesUniform,
         FunctionDescriptor::Values(
             (0..(1000. * std::f64::consts::PI) as usize)
@@ -268,6 +285,7 @@ mod a_rectangleright {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::RectangleRight,
+        A_RES,
         RECTANGLE_TOLERANCE
     );
 }
@@ -277,6 +295,7 @@ mod a_trapezoid {
     use super::*;
 
     generate_test!(
+        f64,
         ClosureExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -284,10 +303,12 @@ mod a_trapezoid {
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::Trapezoid,
+        A_RES,
         TRAPEZOID_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ClosureUniform,
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Uniform {
@@ -296,10 +317,12 @@ mod a_trapezoid {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::Trapezoid,
+        A_RES,
         TRAPEZOID_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ValuesExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -307,10 +330,12 @@ mod a_trapezoid {
         FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect()),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::Trapezoid,
+        A_RES,
         TRAPEZOID_TOLERANCE
     );
 
     generate_test!(
+        f64,
         ValuesUniform,
         FunctionDescriptor::Values(
             (0..(1000. * std::f64::consts::PI) as usize)
@@ -323,6 +348,7 @@ mod a_trapezoid {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::Trapezoid,
+        A_RES,
         TRAPEZOID_TOLERANCE
     );
 }
@@ -332,6 +358,7 @@ mod a_simpson {
     use super::*;
 
     generate_test!(
+        f64,
         ClosureExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -339,10 +366,12 @@ mod a_simpson {
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::Simpson,
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
     generate_test!(
+        f64,
         ClosureUniform,
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Uniform {
@@ -351,10 +380,12 @@ mod a_simpson {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::Simpson,
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
     generate_test!(
+        f64,
         ValuesExplicit,
         let domain: Vec<f64> = (0..(std::f64::consts::PI * 1000.) as usize)
             .map(|step_id| step_id as f64 * STEP)
@@ -362,10 +393,12 @@ mod a_simpson {
         FunctionDescriptor::Values(domain.iter().copied().map(f64::sin).collect()),
         DomainDescriptor::Explicit(&domain),
         ComputeMethod::Simpson,
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
     generate_test!(
+        f64,
         ValuesUniform,
         FunctionDescriptor::Values(
             (0..(1000. * std::f64::consts::PI) as usize)
@@ -378,6 +411,7 @@ mod a_simpson {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::Simpson,
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 }
@@ -388,6 +422,7 @@ mod a_boole {
     use super::*;
 
     generate_test!(
+        f64,
         ClosureUniform,
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Uniform {
@@ -396,10 +431,12 @@ mod a_boole {
             n_step: (1000. * std::f64::consts::PI) as usize - 1,
         },
         ComputeMethod::Boole,
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
     generate_test!(
+        f64,
         ValuesUniform,
         FunctionDescriptor::Values(
             (0..(1000. * std::f64::consts::PI) as usize - 1)
@@ -412,6 +449,7 @@ mod a_boole {
             n_step: (1000. * std::f64::consts::PI) as usize - 1,
         },
         ComputeMethod::Boole,
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 }
@@ -422,6 +460,7 @@ mod a_romberg {
     use super::*;
 
     generate_test!(
+        f64,
         ClosureUniform,
         FunctionDescriptor::Closure(Box::new(f64::sin)),
         DomainDescriptor::Uniform {
@@ -430,10 +469,12 @@ mod a_romberg {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::Romberg { max_steps: 10 },
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 
     generate_test!(
+        f64,
         ValuesUniform,
         FunctionDescriptor::Values(
             (0..(1000. * std::f64::consts::PI) as usize)
@@ -446,6 +487,7 @@ mod a_romberg {
             n_step: (1000. * std::f64::consts::PI) as usize,
         },
         ComputeMethod::Romberg { max_steps: 10 },
+        A_RES,
         TRAPEZOID_TOLERANCE // FIXME: update tol
     );
 }
