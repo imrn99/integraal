@@ -71,7 +71,10 @@ pub enum ComputeMethod {
     /// [reference](https://en.wikipedia.org/wiki/Simpson%27s_rule)
     Simpson,
     /// Boole's method -- [reference](https://en.wikipedia.org/wiki/Boole%27s_rule#Composite_Boole's_Rule)
-    Boole,
+    Boole {
+        /// Force the computation by truncating inputs to fit method requirements
+        force: bool,
+    },
     /// Romberg's method -- [reference](https://en.wikipedia.org/wiki/Romberg%27s_method#Implementation)
     #[cfg(feature = "romberg")]
     Romberg {

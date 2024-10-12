@@ -319,7 +319,7 @@ macro_rules! all_tests {
                 ClosureUniform,
                 $fnd_cls,
                 $dmd_uni,
-                ComputeMethod::Boole,
+                ComputeMethod::Boole { force: true },
                 RES,
                 TRAPEZOID_TOLERANCE // FIXME: update tol
             );
@@ -329,7 +329,7 @@ macro_rules! all_tests {
                 ValuesUniform,
                 $fnd_val,
                 $dmd_uni,
-                ComputeMethod::Boole,
+                ComputeMethod::Boole { force: true },
                 RES,
                 TRAPEZOID_TOLERANCE // FIXME: update tol
             );

@@ -146,7 +146,7 @@ fn values_explicit_arm<X: Scalar>(
                 .sum()
         }
         #[cfg(feature = "boole")]
-        ComputeMethod::Boole => {
+        ComputeMethod::Boole { .. } => {
             return Err(IntegraalError::Unimplemented(
                 "Boole's method isn't implemented for non-uniform domains",
             ));
@@ -217,21 +217,23 @@ fn values_uniform_arm<X: Scalar>(
                     })
                     .sum()
         }
-        ComputeMethod::Boole => {
-            if *n_step % 4 != 0 {
+        ComputeMethod::Boole { force } => {
+            let n_step = if *force {
+                *n_step - *n_step % 4
+            } else {
                 return Err(IntegraalError::BadParameters(
                     "domain should be divided into a multiple of 4 segments for Boole's method",
                 ));
-            }
+            };
 
             let c = X::from(2.0 / 45.0).unwrap() * *step;
 
-            let m1 = X::from(7.0).unwrap() * (vals[0] + vals[*n_step - 1]);
+            let m1 = X::from(7.0).unwrap() * (vals[0] + vals[n_step - 1]);
 
             let c1 = X::from(14.0).unwrap();
             let c2 = X::from(12.0).unwrap();
             let c3 = X::from(32.0).unwrap();
-            let m2: X = (1..*n_step - 1)
+            let m2: X = (1..n_step - 1)
                 .map(|id| match id % 4 {
                     0 => c1 * vals[id],     // multiple of 4
                     2 => c2 * vals[id],     // pair, non-multiple of 4
@@ -331,7 +333,7 @@ fn closure_explicit_arm<X: Scalar>(
                 .sum()
         }
         #[cfg(feature = "boole")]
-        ComputeMethod::Boole => {
+        ComputeMethod::Boole { .. } => {
             return Err(IntegraalError::Unimplemented(
                 "Boole's method isn't implemented for non-uniform domains",
             ));
@@ -408,22 +410,24 @@ fn closure_uniform_arm<X: Scalar>(
                     })
                     .sum()
         }
-        ComputeMethod::Boole => {
-            if *n_step % 4 != 0 {
+        ComputeMethod::Boole { force } => {
+            let n_step = if *force {
+                *n_step - *n_step % 4
+            } else {
                 return Err(IntegraalError::BadParameters(
                     "domain should be divided into a multiple of 4 segments for Boole's method",
                 ));
-            }
+            };
 
             let c = X::from(2.0 / 45.0).unwrap() * *step;
 
             let m1 = X::from(7.0).unwrap()
-                * (closure(*start) + closure(*start + X::from(*n_step - 1).unwrap() * *step));
+                * (closure(*start) + closure(*start + X::from(n_step - 1).unwrap() * *step));
 
             let c1 = X::from(14.0).unwrap();
             let c2 = X::from(12.0).unwrap();
             let c3 = X::from(32.0).unwrap();
-            let m2: X = (1..*n_step - 1)
+            let m2: X = (1..n_step - 1)
                 .map(|id| match id % 4 {
                     0 => c1 * closure(*start + X::from(id).unwrap() * *step), // multiple of 4
                     2 => c2 * closure(*start + X::from(id).unwrap() * *step), // pair, non-multiple of 4
