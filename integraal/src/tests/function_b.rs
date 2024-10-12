@@ -1,19 +1,90 @@
+// ------ IMPORTS
+
+use super::*;
+
+// ------ TESTS
+
 // integral B (contiguous, non-contiguous derivative)
 // y = f(x) = |  x     from 0 to 1
 //            |  1     from 1 to 2
 //            | -x + 3 from 2 to 3
-// expected value = 2
 
-mod rectangle_left {}
+mod double {
+    use super::*;
+    const STEP: f64 = 0.001;
+    const RES: f64 = 2.0;
 
-mod rectangle_right {}
+    const RECTANGLE_TOLERANCE: f64 = 1e-5;
+    const TRAPEZOID_TOLERANCE: f64 = 1e-5;
 
-mod trapezoid {}
+    all_tests!(
+        f64,
+        let domain: Vec<f64> = (0..3000)
+            .map(|step_id| f64::from(step_id) * STEP)
+            .collect(),
+        FunctionDescriptor::Closure(
+            Box::new(|x: f64|
+                if x < 1.0 { x }
+                else if x < 2.0 { 1.0 }
+                else if x < 3.0 { 3.0 - x }
+                else { 0.0 })
+        ),
+        FunctionDescriptor::Values(
+            (0..3000)
+                .map(|step_id| {
+                    let x = f64::from(step_id) * STEP;
+                    if x < 1.0 { x }
+                    else if x < 2.0 { 1.0 }
+                    else if x < 3.0 { 3.0 - x }
+                    else { 0.0 }
+                })
+                .collect()
+        ),
+        DomainDescriptor::Explicit(&domain),
+        DomainDescriptor::Uniform {
+            start: 0.,
+            step: STEP,
+            n_step: 3000,
+        },
+    );
+}
 
-mod simpson {}
+mod simple {
+    use super::*;
+    const STEP: f32 = 0.001;
+    const RES: f32 = 2.0;
 
-#[cfg(feature = "boole")]
-mod boole {}
+    const RECTANGLE_TOLERANCE: f32 = 1e-5;
+    const TRAPEZOID_TOLERANCE: f32 = 1e-5;
 
-#[cfg(feature = "romberg")]
-mod romberg {}
+    all_tests!(
+        f32,
+        let domain: Vec<f32> = (0..3000)
+            .map(|step_id| step_id as f32 * STEP)
+            .collect(),
+        FunctionDescriptor::Closure(
+            Box::new(|x: f32|
+                if x < 1.0 { x }
+                else if x < 2.0 { 1.0 }
+                else if x < 3.0 { 3.0 - x }
+                else { 0.0 })
+        ),
+        FunctionDescriptor::Values(
+            (0..3000)
+                .map(|step_id| {
+                    let x = step_id as f32 * STEP;
+                    if x < 1.0 { x }
+                    else if x < 2.0 { 1.0 }
+                    else if x < 3.0 { 3.0 - x }
+                    else { 0.0 }
+                })
+                .collect()
+        ),
+        DomainDescriptor::Explicit(&domain),
+        DomainDescriptor::Uniform {
+            start: 0.,
+            step: STEP,
+            n_step: 3000,
+        },
+    );
+}
