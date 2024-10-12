@@ -48,3 +48,8 @@ mod traits;
 pub use parameters::{ComputeMethod, DomainDescriptor, FunctionDescriptor};
 pub use structure::{Integraal, IntegraalError};
 pub use traits::Scalar;
+
+// ------ TESTS
+
+#[cfg(test)]
+mod tests;
