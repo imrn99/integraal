@@ -5,6 +5,8 @@
 use crate::{
     ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
 };
+#[cfg(feature = "montecarlo")]
+use rand::Rng;
 
 // ------ CONTENT
 
@@ -166,7 +168,7 @@ fn values_explicit_arm<X: Scalar>(
     Ok(res)
 }
 
-#[allow(clippy::cast_possible_truncation)]
+#[allow(clippy::cast_possible_truncation, clippy::too_many_lines)]
 fn values_uniform_arm<X: Scalar>(
     vals: &[X],
     domain: &DomainDescriptor<X>,
@@ -278,8 +280,29 @@ fn values_uniform_arm<X: Scalar>(
             }
         }
         #[cfg(feature = "montecarlo")]
-        ComputeMethod::MonteCarlo { n_sample: _ } => {
-            todo!()
+        ComputeMethod::MonteCarlo { n_sample } => {
+            let (mut min, mut max) = (vals[0], vals[0]);
+            for v in vals {
+                min = min.min(*v);
+                max = max.max(*v);
+            }
+            let intervals = vals.iter().map(|v| v.min(X::zero())..v.max(X::zero()));
+            let volume: X = (max - min) * (X::from(*n_step).unwrap() * *step);
+            let mut rng = rand::thread_rng();
+            let random_numbers: Vec<X> = (&mut rng)
+                .sample_iter(
+                    rand::distr::Uniform::new(min.to_f64().unwrap(), max.to_f64().unwrap())
+                        .unwrap(),
+                )
+                .take(*n_sample * *n_step)
+                .map(|s| X::from(s).unwrap())
+                .collect();
+            let total_in: usize = random_numbers
+                .chunks_exact(*n_sample)
+                .zip(intervals)
+                .map(|(samples, range)| samples.iter().filter(|s| range.contains(s)).count())
+                .sum();
+            volume * X::from(total_in as f64 / *n_sample as f64).unwrap()
         }
     };
 
