@@ -201,7 +201,7 @@ fn values_uniform_arm<X: Scalar>(
     method: &ComputeMethod,
 ) -> Result<X, IntegraalError> {
     let DomainDescriptor::Uniform {
-        start,
+        start: _,
         step,
         n_step,
     } = domain
@@ -245,6 +245,7 @@ fn values_uniform_arm<X: Scalar>(
                     })
                     .sum()
         }
+        #[cfg(feature = "boole")]
         ComputeMethod::Boole { force } => {
             let n_step = if *force {
                 *n_step - *n_step % 4
@@ -488,6 +489,7 @@ fn closure_uniform_arm<X: Scalar>(
                     })
                     .sum()
         }
+        #[cfg(feature = "boole")]
         ComputeMethod::Boole { force } => {
             let n_step = if *force {
                 *n_step - *n_step % 4
