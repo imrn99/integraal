@@ -187,7 +187,7 @@ fn values_explicit_arm<X: Scalar>(
                     X::from(samples.iter().filter(|s| range.contains(s)).count()).unwrap() * width
                 })
                 .sum();
-            height * total_in / X::from(*n_sample as f64).unwrap()
+            height * total_in / X::from(*n_sample * (args.len() - 1)).unwrap()
         }
     };
 
@@ -328,7 +328,7 @@ fn values_uniform_arm<X: Scalar>(
                 .zip(intervals)
                 .map(|(samples, range)| samples.iter().filter(|s| range.contains(s)).count())
                 .sum();
-            volume * X::from(total_in as f64 / *n_sample as f64).unwrap()
+            volume * X::from(total_in as f64 / (*n_sample * *n_step) as f64).unwrap()
         }
     };
 
@@ -424,7 +424,7 @@ fn closure_explicit_arm<X: Scalar>(
                     X::from(samples.iter().filter(|s| range.contains(s)).count()).unwrap() * width
                 })
                 .sum();
-            height * total_in / X::from(*n_sample as f64).unwrap()
+            height * total_in / X::from(*n_sample * (args.len() - 1)).unwrap()
         }
     };
     Ok(res)
@@ -580,7 +580,7 @@ fn closure_uniform_arm<X: Scalar>(
                 .zip(intervals)
                 .map(|(samples, range)| samples.iter().filter(|s| range.contains(s)).count())
                 .sum();
-            volume * X::from(total_in as f64 / *n_sample as f64).unwrap()
+            volume * X::from(total_in as f64 / (*n_sample * *n_step) as f64).unwrap()
         }
     };
 
