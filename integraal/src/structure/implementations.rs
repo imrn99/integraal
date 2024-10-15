@@ -5,6 +5,8 @@
 use crate::{
     ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal, IntegraalError, Scalar,
 };
+#[cfg(feature = "montecarlo")]
+use rand::Rng;
 
 // ------ CONTENT
 
@@ -158,15 +160,41 @@ fn values_explicit_arm<X: Scalar>(
             ));
         }
         #[cfg(feature = "montecarlo")]
-        ComputeMethod::MonteCarlo { n_sample: _ } => {
-            todo!()
+        ComputeMethod::MonteCarlo { n_sample } => {
+            let (mut min, mut max) = (vals[0], vals[0]);
+            for v in vals {
+                min = min.min(*v);
+                max = max.max(*v);
+            }
+            let height: X = max - min;
+            let widths = args.windows(2).enumerate().map(|(i, slice)| {
+                let [a, b] = slice else { unreachable!() };
+                (vals[i].min(X::zero())..vals[i].max(X::zero()), (*b - *a))
+            });
+            let mut rng = rand::thread_rng();
+            let random_numbers: Vec<X> = (&mut rng)
+                .sample_iter(
+                    rand::distr::Uniform::new(min.to_f64().unwrap(), max.to_f64().unwrap())
+                        .unwrap(),
+                )
+                .take(*n_sample * (args.len() - 1))
+                .map(|s| X::from(s).unwrap())
+                .collect();
+            let total_in: X = random_numbers
+                .chunks_exact(*n_sample)
+                .zip(widths)
+                .map(|(samples, (range, width))| {
+                    X::from(samples.iter().filter(|s| range.contains(s)).count()).unwrap() * width
+                })
+                .sum();
+            height * total_in / X::from(*n_sample * (args.len() - 1)).unwrap()
         }
     };
 
     Ok(res)
 }
 
-#[allow(clippy::cast_possible_truncation)]
+#[allow(clippy::cast_possible_truncation, clippy::too_many_lines)]
 fn values_uniform_arm<X: Scalar>(
     vals: &[X],
     domain: &DomainDescriptor<X>,
@@ -278,8 +306,29 @@ fn values_uniform_arm<X: Scalar>(
             }
         }
         #[cfg(feature = "montecarlo")]
-        ComputeMethod::MonteCarlo { n_sample: _ } => {
-            todo!()
+        ComputeMethod::MonteCarlo { n_sample } => {
+            let (mut min, mut max) = (vals[0], vals[0]);
+            for v in vals {
+                min = min.min(*v);
+                max = max.max(*v);
+            }
+            let intervals = vals.iter().map(|v| v.min(X::zero())..v.max(X::zero()));
+            let volume: X = (max - min) * (X::from(*n_step).unwrap() * *step);
+            let mut rng = rand::thread_rng();
+            let random_numbers: Vec<X> = (&mut rng)
+                .sample_iter(
+                    rand::distr::Uniform::new(min.to_f64().unwrap(), max.to_f64().unwrap())
+                        .unwrap(),
+                )
+                .take(*n_sample * *n_step)
+                .map(|s| X::from(s).unwrap())
+                .collect();
+            let total_in: usize = random_numbers
+                .chunks_exact(*n_sample)
+                .zip(intervals)
+                .map(|(samples, range)| samples.iter().filter(|s| range.contains(s)).count())
+                .sum();
+            volume * X::from(total_in as f64 / (*n_sample * *n_step) as f64).unwrap()
         }
     };
 
@@ -345,8 +394,37 @@ fn closure_explicit_arm<X: Scalar>(
             ));
         }
         #[cfg(feature = "montecarlo")]
-        ComputeMethod::MonteCarlo { n_sample: _ } => {
-            todo!()
+        ComputeMethod::MonteCarlo { n_sample } => {
+            let (mut min, mut max) = (closure(args[0]), closure(args[0]));
+            for a in args {
+                min = min.min(closure(*a));
+                max = max.max(closure(*a));
+            }
+            let height: X = max - min;
+            let widths = args.windows(2).map(|slice| {
+                let [a, b] = slice else { unreachable!() };
+                (
+                    closure(*a).min(X::zero())..closure(*a).max(X::zero()),
+                    (*b - *a),
+                )
+            });
+            let mut rng = rand::thread_rng();
+            let random_numbers: Vec<X> = (&mut rng)
+                .sample_iter(
+                    rand::distr::Uniform::new(min.to_f64().unwrap(), max.to_f64().unwrap())
+                        .unwrap(),
+                )
+                .take(*n_sample * (args.len() - 1))
+                .map(|s| X::from(s).unwrap())
+                .collect();
+            let total_in: X = random_numbers
+                .chunks_exact(*n_sample)
+                .zip(widths)
+                .map(|(samples, (range, width))| {
+                    X::from(samples.iter().filter(|s| range.contains(s)).count()).unwrap() * width
+                })
+                .sum();
+            height * total_in / X::from(*n_sample * (args.len() - 1)).unwrap()
         }
     };
     Ok(res)
@@ -476,8 +554,33 @@ fn closure_uniform_arm<X: Scalar>(
             }
         }
         #[cfg(feature = "montecarlo")]
-        ComputeMethod::MonteCarlo { n_sample: _ } => {
-            todo!()
+        ComputeMethod::MonteCarlo { n_sample } => {
+            // FIXME: nuke this temp allocation
+            let vals: Vec<_> = (0..*n_step)
+                .map(|i| closure(*start + X::from(i).unwrap() * *step))
+                .collect();
+            let (mut min, mut max) = (vals[0], vals[0]);
+            for v in &vals {
+                min = min.min(*v);
+                max = max.max(*v);
+            }
+            let intervals = vals.iter().map(|v| v.min(X::zero())..v.max(X::zero()));
+            let volume: X = (max - min) * (X::from(*n_step).unwrap() * *step);
+            let mut rng = rand::thread_rng();
+            let random_numbers: Vec<X> = (&mut rng)
+                .sample_iter(
+                    rand::distr::Uniform::new(min.to_f64().unwrap(), max.to_f64().unwrap())
+                        .unwrap(),
+                )
+                .take(*n_sample * *n_step)
+                .map(|s| X::from(s).unwrap())
+                .collect();
+            let total_in: usize = random_numbers
+                .chunks_exact(*n_sample)
+                .zip(intervals)
+                .map(|(samples, range)| samples.iter().filter(|s| range.contains(s)).count())
+                .sum();
+            volume * X::from(total_in as f64 / (*n_sample * *n_step) as f64).unwrap()
         }
     };
 
