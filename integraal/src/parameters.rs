@@ -71,6 +71,7 @@ pub enum ComputeMethod {
     /// [reference](https://en.wikipedia.org/wiki/Simpson%27s_rule)
     Simpson,
     /// Boole's method -- [reference](https://en.wikipedia.org/wiki/Boole%27s_rule#Composite_Boole's_Rule)
+    #[cfg(feature = "boole")]
     Boole {
         /// Force the computation by truncating inputs to fit method requirements
         force: bool,
