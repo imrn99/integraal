@@ -360,6 +360,54 @@ macro_rules! all_tests {
                 ROMBERG_TOLERANCE
             );
         }
+
+        #[cfg(feature = "montecarlo")]
+        #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+        mod montecarlo {
+            use super::*;
+
+            generate_test!(
+                $ft,
+                ClosureExplicit,
+                $dm,
+                $fnd_cls,
+                $dmd_xpl,
+                ComputeMethod::MonteCarlo { n_sample: 100 },
+                RES,
+                MONTECARLO_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ClosureUniform,
+                $fnd_cls,
+                $dmd_uni,
+                ComputeMethod::MonteCarlo { n_sample: 100 },
+                RES,
+                MONTECARLO_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesExplicit,
+                $dm,
+                $fnd_val,
+                $dmd_xpl,
+                ComputeMethod::MonteCarlo { n_sample: 100 },
+                RES,
+                MONTECARLO_TOLERANCE
+            );
+
+            generate_test!(
+                $ft,
+                ValuesUniform,
+                $fnd_val,
+                $dmd_uni,
+                ComputeMethod::MonteCarlo { n_sample: 100 },
+                RES,
+                MONTECARLO_TOLERANCE
+            );
+        }
     };
 }
 

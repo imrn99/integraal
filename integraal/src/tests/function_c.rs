@@ -20,6 +20,7 @@ mod double {
     const SIMPSON_TOLERANCE: f64 = 1e-5;
     const BOOLE_TOLERANCE: f64 = 1e-5;
     const ROMBERG_TOLERANCE: f64 = 1e-5;
+    const MONTECARLO_TOLERANCE: f64 = 1e-5;
 
     all_tests!(
         f64,
@@ -62,6 +63,7 @@ mod simple {
     const SIMPSON_TOLERANCE: f32 = 1e-5;
     const BOOLE_TOLERANCE: f32 = 1e-5;
     const ROMBERG_TOLERANCE: f32 = 1e-5;
+    const MONTECARLO_TOLERANCE: f32 = 1e-5;
 
     all_tests!(
         f32,
