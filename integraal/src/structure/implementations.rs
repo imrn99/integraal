@@ -201,7 +201,7 @@ fn values_uniform_arm<X: Scalar>(
     method: &ComputeMethod,
 ) -> Result<X, IntegraalError> {
     let DomainDescriptor::Uniform {
-        start: _,
+        start,
         step,
         n_step,
     } = domain
