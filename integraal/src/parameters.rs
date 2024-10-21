@@ -10,16 +10,15 @@ use crate::Scalar;
 /// is automatially implemented for types satisfying its requirements. In the future, adding support for
 /// higher dimension can be considered.
 #[derive(Debug, Clone)]
-pub enum DomainDescriptor<'a, T: Scalar> {
-    // FIXME: change to a vector
+pub enum DomainDescriptor<X: Scalar> {
     /// List of values taken by the variable on which we integrate.
-    Explicit(&'a [T]),
+    Explicit(Vec<X>),
     /// Description of a uniform discretization over a certain range of values.
     Uniform {
         /// First value of the range
-        start: T,
+        start: X,
         /// Step between each value of the range
-        step: T,
+        step: X,
         /// Total number of values
         n_step: usize,
     },

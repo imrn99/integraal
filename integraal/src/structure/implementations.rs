@@ -10,10 +10,10 @@ use rand::Rng;
 
 // ------ CONTENT
 
-impl<'a, X: Scalar> Integraal<'a, X> {
+impl<X: Scalar> Integraal<X> {
     /// Set the domain descriptor.
     #[must_use = "unused builder struct - please remove this call"]
-    pub fn domain(mut self, domain_descriptor: DomainDescriptor<'a, X>) -> Self {
+    pub fn domain(mut self, domain_descriptor: DomainDescriptor<X>) -> Self {
         self.domain = Some(domain_descriptor);
         self
     }
