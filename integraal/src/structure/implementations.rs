@@ -39,7 +39,7 @@ impl<'a, X: Scalar> Integraal<'a, X> {
     /// # Return / Errors
     ///
     /// This method returns a `Result` taking the following values:
-    /// - `Ok(X: Scalar)` -- The computation was successfuly done
+    /// - `Ok(X: Scalar)` -- The computation succeeded.
     /// - `Err(IntegraalError)` -- The computation failed for the reason specified by the enum.
     pub fn compute(&mut self) -> Result<X, IntegraalError> {
         // ensure all data is defined
@@ -86,13 +86,15 @@ impl<'a, X: Scalar> Integraal<'a, X> {
             (_, _) => unreachable!(),
         };
 
-        self.function = None; // is this really useful? we could wire returns directly using `?` if this wasn't here
+        self.function = None; // is this really useful? we could directly return if this wasn't here
         Ok(res)
     }
 }
 
-// ---
+// --- internals
 
+// function descriptor -- values
+// domain descriptor   -- explicit
 fn values_explicit_arm<X: Scalar>(
     vals: &[X],
     args: &[X],
@@ -194,6 +196,8 @@ fn values_explicit_arm<X: Scalar>(
     Ok(res)
 }
 
+// function descriptor -- values
+// domain descriptor   -- uniform
 #[allow(clippy::cast_possible_truncation, clippy::too_many_lines)]
 fn values_uniform_arm<X: Scalar>(
     vals: &[X],
@@ -336,6 +340,8 @@ fn values_uniform_arm<X: Scalar>(
     Ok(res)
 }
 
+// function descriptor -- closure
+// domain descriptor   -- explicit
 #[allow(clippy::unnecessary_wraps)]
 fn closure_explicit_arm<X: Scalar>(
     closure: impl Fn(X) -> X,
@@ -431,6 +437,8 @@ fn closure_explicit_arm<X: Scalar>(
     Ok(res)
 }
 
+// function descriptor -- closure
+// domain descriptor   -- uniform
 #[allow(
     clippy::unnecessary_wraps,
     clippy::cast_possible_truncation,

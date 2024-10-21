@@ -24,7 +24,7 @@ pub enum IntegraalError {
 /// This structure is used as the entrypoint for integral definition and computation. It follows
 /// a pseudo-builder patterns where the function description is reset after a computation. This is
 /// the preferred behavior as many different integrals may be computed over the same domain in
-/// scientific problems.
+/// scientific applications.
 ///
 /// # Usage
 ///
@@ -44,14 +44,16 @@ pub enum IntegraalError {
 /// ```rust
 /// # use integraal::{DomainDescriptor, ComputeMethod, FunctionDescriptor, Integraal, IntegraalError};
 /// # fn main() {
-/// // describe domain
+/// // describe domain; 0 to 1, with a step of 10^-5
 /// let domain = DomainDescriptor::Uniform {
 ///     start: 0.0,
 ///     step: 0.00001,
 ///     n_step: 100_001,
 /// };
-/// // decribe the function
+///
+/// // decribe the function; f(x) = 2 * x
 /// let function = FunctionDescriptor::Closure(Box::new(|x: f64| 2.0 * x));
+///
 /// // choose the numerical integration method
 /// let method = ComputeMethod::Trapezoid;
 ///
@@ -60,6 +62,7 @@ pub enum IntegraalError {
 ///     .domain(domain)
 ///     .function(function)
 ///     .method(method);
+///
 /// assert!(integral.compute().is_ok())
 /// # }
 /// ```

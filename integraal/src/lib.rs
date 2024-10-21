@@ -11,13 +11,11 @@
 //!
 //! # Features
 //!
-//! ## Policy
-//!
 //! As a rule of thumb, a computation method will be gated behind a feature if (a) it requires
 //! additional dependencies, or (b) it is not implemented for all integral definitions (e.g.
 //! a method that requires a uniform domain).
 //!
-//! ## Feature list
+//! The following features can be enabled:
 //!
 //! - `boole` -- enable the Boole computation method.
 //! - `montecarlo` -- enable the Monte-Carlo computation method.
