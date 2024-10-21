@@ -4,13 +4,14 @@ use crate::Scalar;
 
 /// Domain description enum
 ///
-/// This is essentially a discretization of the integrated space.
+/// This represents a discretization of the integrated space.
 ///
-/// Currently, the supported integration domain can only be one-dimensionnal, described using
-/// a value type (implementing [`Scalar`]). In the future, adding support for higher dimension
-/// can be considered.
+/// Only 1D domains are currently supported. the type used for values must implement [`Scalar`]; the trait
+/// is automatially implemented for types satisfying its requirements. In the future, adding support for
+/// higher dimension can be considered.
 #[derive(Debug, Clone)]
 pub enum DomainDescriptor<'a, T: Scalar> {
+    // FIXME: change to a vector
     /// List of values taken by the variable on which we integrate.
     Explicit(&'a [T]),
     /// Description of a uniform discretization over a certain range of values.
@@ -26,17 +27,17 @@ pub enum DomainDescriptor<'a, T: Scalar> {
 
 /// Function description enum
 ///
-/// This enum is used to provide either the values taken by the function or describe of to compute
-/// those.
+/// This holds information about the function's values, as either explicit values or a closure that
+/// can be used to compute those.
 pub enum FunctionDescriptor<X>
 where
     X: Scalar,
 {
     /// Direct expression of the function, taking a value of the domain as input & returning the
-    /// image of that value through the function.
+    /// image of that value.
     Closure(Box<dyn Fn(X) -> X>),
-    /// List of values taken by the function. The coherence with the domain description must
-    /// be ensured by the user in this case.
+    /// List of values taken by the function. An error will be raised at computation if the length
+    /// of the list isn't consistent with the domain descriptor.
     Values(Vec<X>),
 }
 
@@ -85,7 +86,7 @@ pub enum ComputeMethod {
     #[cfg(feature = "montecarlo")]
     /// Monte-Carlo method -- [reference](https://en.wikipedia.org/wiki/Monte_Carlo_integration)
     MonteCarlo {
-        /// Number of random number sample per step computation.
+        /// Number of samples per step computation.
         n_sample: usize,
     },
 }
