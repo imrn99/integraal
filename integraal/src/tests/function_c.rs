@@ -24,26 +24,28 @@ mod double {
 
     all_tests!(
         f64,
-        let domain: Vec<f64> = (0..2000)
-            .map(|step_id| f64::from(step_id) * STEP)
-            .collect(),
-        FunctionDescriptor::Closure(
-            Box::new(|x|
-                if x < 1.0 { 0.0 }
-                else if x < 1.5 { 1.0 }
-                else { 0.0 })
-        ),
+        FunctionDescriptor::Closure(Box::new(|x| if x < 1.0 {
+            0.0
+        } else if x < 1.5 {
+            1.0
+        } else {
+            0.0
+        })),
         FunctionDescriptor::Values(
             (0..2000)
                 .map(|step_id| {
                     let x = f64::from(step_id) * STEP;
-                    if x < 1.0 { 0.0 }
-                    else if x < 1.5 { 1.0 }
-                    else { 0.0 }
+                    if x < 1.0 {
+                        0.0
+                    } else if x < 1.5 {
+                        1.0
+                    } else {
+                        0.0
+                    }
                 })
                 .collect()
         ),
-        DomainDescriptor::Explicit(&domain),
+        DomainDescriptor::Explicit((0..2000).map(|step_id| f64::from(step_id) * STEP).collect()),
         DomainDescriptor::Uniform {
             start: 0.,
             step: STEP,
@@ -67,26 +69,28 @@ mod simple {
 
     all_tests!(
         f32,
-        let domain: Vec<f32> = (0..2000)
-            .map(|step_id| step_id as f32 * STEP)
-            .collect(),
-        FunctionDescriptor::Closure(
-            Box::new(|x|
-                if x < 1.0 { 0.0 }
-                else if x < 1.5 { 1.0 }
-                else { 0.0 })
-        ),
+        FunctionDescriptor::Closure(Box::new(|x| if x < 1.0 {
+            0.0
+        } else if x < 1.5 {
+            1.0
+        } else {
+            0.0
+        })),
         FunctionDescriptor::Values(
             (0..2000)
                 .map(|step_id| {
                     let x = step_id as f32 * STEP;
-                    if x < 1.0 { 0.0 }
-                    else if x < 1.5 { 1.0 }
-                    else { 0.0 }
+                    if x < 1.0 {
+                        0.0
+                    } else if x < 1.5 {
+                        1.0
+                    } else {
+                        0.0
+                    }
                 })
                 .collect()
         ),
-        DomainDescriptor::Explicit(&domain),
+        DomainDescriptor::Explicit((0..2000).map(|step_id| step_id as f32 * STEP).collect()),
         DomainDescriptor::Uniform {
             start: 0.,
             step: STEP,
