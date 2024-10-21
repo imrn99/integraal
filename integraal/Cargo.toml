@@ -24,6 +24,7 @@ romberg = []              # gated because it is not implemented for all input ki
 [dependencies]
 num-traits.workspace = true
 rand = { workspace = true, features = ["small_rng"], optional = true }
+thiserror.workspace = true
 
 [build-dependencies]
 rustversion.workspace = true
