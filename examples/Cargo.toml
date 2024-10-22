@@ -13,30 +13,13 @@ keywords = ["algorithms", "analysis", "integration", "numerical-analysis", "nume
 
 [dependencies]
 integraal = { workspace = true, features = ["boole", "montecarlo", "romberg"] }
-rand = { workspace = true, features = ["small_rng"] }
 
 # EXAMPLES
 
 [[example]]
-name = "rectangle_hardcoded"
-path = "examples/rectangle/hardcoded.rs"
+name = "from_measurements"
+path = "examples/measurements.rs"
 
 [[example]]
-name = "rectangle_integraal"
-path = "examples/rectangle/integraal.rs"
-
-[[example]]
-name = "trapezoid_hardcoded"
-path = "examples/trapezoid/hardcoded.rs"
-
-[[example]]
-name = "trapezoid_integraal"
-path = "examples/trapezoid/integraal.rs"
-
-[[example]]
-name = "montecarlo_hardcoded"
-path = "examples/montecarlo/hardcoded.rs"
-
-[[example]]
-name = "montecarlo_integraal"
-path = "examples/montecarlo/integraal.rs"
+name = "from_expression"
+path = "examples/expression.rs"
