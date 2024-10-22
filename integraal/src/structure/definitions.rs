@@ -71,9 +71,9 @@ pub enum IntegraalError {
 /// # }
 /// ```
 #[derive(Default)]
-pub struct Integraal<'a, X: Scalar> {
+pub struct Integraal<X: Scalar> {
     /// Domain over which the function is integrated.
-    pub(crate) domain: Option<DomainDescriptor<'a, X>>,
+    pub(crate) domain: Option<DomainDescriptor<X>>,
     /// Function to integrate.
     pub(crate) function: Option<FunctionDescriptor<X>>,
     /// Numerical integration method used for value approximation.

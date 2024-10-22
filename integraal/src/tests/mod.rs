@@ -33,14 +33,14 @@ mod function_e;
 macro_rules! generate_sample_descriptors {
     ($f: ident, $d: ident, $c: ident) => {
         let $f: FunctionDescriptor<f64> = FunctionDescriptor::Closure(Box::new(|x| x));
-        let $d: DomainDescriptor<'_, f64> = DomainDescriptor::Explicit(&[]);
+        let $d: DomainDescriptor<f64> = DomainDescriptor::Explicit(vec![]);
         let $c: ComputeMethod = ComputeMethod::RectangleLeft;
     };
 }
 
 macro_rules! generate_missing {
     ($a: ident, $b: ident) => {
-        let mut integral: Integraal<'_, f64> = Integraal::default().$a($a).$b($b);
+        let mut integral: Integraal<f64> = Integraal::default().$a($a).$b($b);
         assert_eq!(
             integral.compute(),
             Err(IntegraalError::MissingParameters(
@@ -64,29 +64,6 @@ macro_rules! almost_equal {
 }
 
 macro_rules! generate_test {
-    ($ft: ty, $name: ident, $dm: stmt, $fnd: expr, $dmd: expr, $met: expr, $res: ident, $tol: ident) => {
-        #[allow(non_snake_case)]
-        #[test]
-        fn $name() {
-            $dm
-
-            let functiond = $fnd;
-            let domaind = $dmd;
-            let computem = $met;
-            let mut integraal = Integraal::default()
-                .function(functiond)
-                .domain(domaind)
-                .method(computem);
-            let res = integraal.compute();
-            assert!(res.is_ok());
-            assert!(
-                almost_equal!($ft, res.unwrap(), $res, $tol),
-                "left: {} \nright: {}",
-                res.unwrap(),
-                $res,
-            );
-        }
-    };
     ($ft: ty, $name: ident, $fnd: expr, $dmd: expr, $met: expr, $res: ident, $tol: ident) => {
         #[allow(non_snake_case)]
         #[test]
@@ -112,14 +89,10 @@ macro_rules! generate_test {
 macro_rules! all_tests {
     (
       $ft: ty,           // float type
-      $dm: stmt,         // domain
       $fnd_cls: expr,    // function descriptor (closure)
       $fnd_val: expr,    // function descriptor (values)
       $dmd_xpl: expr,    // domain descriptor (explicit)
       $dmd_uni: expr,    // domain descriptor (uniform)
-      // $met: expr,     // compute method
-      // $res: ident,    // expected result
-      // $tol: ident     // tolerance
     ) => {
         #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
         mod rectangle_left {
@@ -128,7 +101,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ClosureExplicit,
-                $dm,
                 $fnd_cls,
                 $dmd_xpl,
                 ComputeMethod::RectangleLeft,
@@ -149,7 +121,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ValuesExplicit,
-                $dm,
                 $fnd_val,
                 $dmd_xpl,
                 ComputeMethod::RectangleLeft,
@@ -175,7 +146,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ClosureExplicit,
-                $dm,
                 $fnd_cls,
                 $dmd_xpl,
                 ComputeMethod::RectangleRight,
@@ -196,7 +166,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ValuesExplicit,
-                $dm,
                 $fnd_val,
                 $dmd_xpl,
                 ComputeMethod::RectangleRight,
@@ -222,7 +191,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ClosureExplicit,
-                $dm,
                 $fnd_cls,
                 $dmd_xpl,
                 ComputeMethod::Trapezoid,
@@ -243,7 +211,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ValuesExplicit,
-                $dm,
                 $fnd_val,
                 $dmd_xpl,
                 ComputeMethod::Trapezoid,
@@ -269,7 +236,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ClosureExplicit,
-                $dm,
                 $fnd_cls,
                 $dmd_xpl,
                 ComputeMethod::Simpson,
@@ -290,7 +256,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ValuesExplicit,
-                $dm,
                 $fnd_val,
                 $dmd_xpl,
                 ComputeMethod::Simpson,
@@ -369,7 +334,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ClosureExplicit,
-                $dm,
                 $fnd_cls,
                 $dmd_xpl,
                 ComputeMethod::MonteCarlo { n_sample: 100 },
@@ -390,7 +354,6 @@ macro_rules! all_tests {
             generate_test!(
                 $ft,
                 ValuesExplicit,
-                $dm,
                 $fnd_val,
                 $dmd_xpl,
                 ComputeMethod::MonteCarlo { n_sample: 100 },

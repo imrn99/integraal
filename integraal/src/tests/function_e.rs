@@ -23,16 +23,17 @@ mod double {
 
     all_tests!(
         f64,
-        let domain: Vec<f64> = (-4000..4000)
-            .map(|step_id| f64::from(step_id) * STEP)
-            .collect(),
         FunctionDescriptor::Closure(Box::new(|x: f64| x.powi(2))),
         FunctionDescriptor::Values(
             (-4000..4000)
                 .map(|step_id| (f64::from(step_id) * STEP).powi(2))
                 .collect()
         ),
-        DomainDescriptor::Explicit(&domain),
+        DomainDescriptor::Explicit(
+            (-4000..4000)
+                .map(|step_id| f64::from(step_id) * STEP)
+                .collect()
+        ),
         DomainDescriptor::Uniform {
             start: -4.,
             step: STEP,
@@ -56,16 +57,13 @@ mod simple {
 
     all_tests!(
         f32,
-        let domain: Vec<f32> = (-4000..4000)
-            .map(|step_id| step_id as f32 * STEP)
-            .collect(),
         FunctionDescriptor::Closure(Box::new(|x: f32| x.powi(2))),
         FunctionDescriptor::Values(
             (-4000..4000)
                 .map(|step_id| (step_id as f32 * STEP).powi(2))
                 .collect()
         ),
-        DomainDescriptor::Explicit(&domain),
+        DomainDescriptor::Explicit((-4000..4000).map(|step_id| step_id as f32 * STEP).collect()),
         DomainDescriptor::Uniform {
             start: -4.,
             step: STEP,
