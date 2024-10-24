@@ -1,23 +1,31 @@
-use std::path::Path;
-
 use csv::ReaderBuilder;
 use integraal::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal};
+use std::path::Path;
+
+const RMAX: f64 = 41.;
 
 fn main() {
     let (domain, speed_values) = parse_csv("examples/anemometry.csv");
 
-    // we cannot integrate directly the speed values
+    // we cannot integrate directly using the speed values
+    // we need to compose the integrated term since this is a weighted sum
 
-    let values = todo!();
+    let values = speed_values
+        .iter()
+        .zip(domain.iter())
+        .map(|(s, r)| *s * (*r))
+        .collect();
 
     let mut integral = Integraal::default()
         .domain(DomainDescriptor::Explicit(&domain))
         .function(FunctionDescriptor::Values(values))
         .method(ComputeMethod::Trapezoid);
 
-    let res = integral.compute().unwrap();
+    let mut res = integral.compute().unwrap();
 
-    println!("average fluid speed at pipe section: {res:.10} m/s");
+    res *= 2.0 / RMAX.powi(2);
+
+    println!("average fluid speed at pipe section: {res:.3} m/s");
 }
 
 fn parse_csv(path: impl AsRef<Path>) -> (Vec<f64>, Vec<f64>) {
@@ -36,10 +44,8 @@ fn parse_csv(path: impl AsRef<Path>) -> (Vec<f64>, Vec<f64>) {
         .unwrap()
         .iter()
         .enumerate()
-        .find_map(|(id, s)| if *s == *"U" { Some(id) } else { None })
+        .find_map(|(id, s)| if *s == *"Average" { Some(id) } else { None })
         .unwrap();
-    println!("r: {radius_col:?}");
-    println!("s: {speed_col:?}");
     reader
         .records()
         .filter_map(|r| {
