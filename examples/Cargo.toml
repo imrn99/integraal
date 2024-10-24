@@ -13,6 +13,7 @@ keywords = ["algorithms", "analysis", "integration", "numerical-analysis", "nume
 
 [dependencies]
 integraal = { workspace = true, features = ["boole", "montecarlo", "romberg"] }
+csv.workspace = true
 
 # EXAMPLES
 
