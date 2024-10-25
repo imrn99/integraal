@@ -7,15 +7,19 @@ use crate::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Scalar};
 // ------ CONTENT
 
 /// Integral error
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, thiserror::Error)]
 pub enum IntegraalError {
     /// Some parameters do not fit the requirements of the computation method.
+    #[error("{0}")]
     BadParameters(&'static str),
     /// Specified parameters are conflicting or ambiguous.
+    #[error("{0}")]
     InconsistentParameters(&'static str),
     /// One or more parameters are missing.
+    #[error("{0}")]
     MissingParameters(&'static str),
     /// A given method isn't implemented for the specified parameters (e.g. due to requirements).
+    #[error("{0}")]
     Unimplemented(&'static str),
 }
 
@@ -67,9 +71,9 @@ pub enum IntegraalError {
 /// # }
 /// ```
 #[derive(Default)]
-pub struct Integraal<'a, X: Scalar> {
+pub struct Integraal<X: Scalar> {
     /// Domain over which the function is integrated.
-    pub(crate) domain: Option<DomainDescriptor<'a, X>>,
+    pub(crate) domain: Option<DomainDescriptor<X>>,
     /// Function to integrate.
     pub(crate) function: Option<FunctionDescriptor<X>>,
     /// Numerical integration method used for value approximation.

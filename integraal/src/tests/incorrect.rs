@@ -20,7 +20,7 @@ fn missing_parameters() {
     generate_missing!(function, domain);
 
     // missing all but one
-    let mut integral: Integraal<'_, f64> = Integraal::default().method(method);
+    let mut integral: Integraal<f64> = Integraal::default().method(method);
     assert_eq!(
         integral.compute(),
         Err(IntegraalError::MissingParameters(
@@ -33,8 +33,7 @@ fn missing_parameters() {
 fn inconsistent_parameters() {
     let method = ComputeMethod::RectangleLeft;
     let function = FunctionDescriptor::Values(vec![1., 1., 1., 1., 1., 1.]);
-    let domain = vec![0.0, 0.1, 0.2, 0.3, 0.4]; // missing the last x value
-    let domain = DomainDescriptor::Explicit(&domain);
+    let domain = DomainDescriptor::Explicit(vec![0.0, 0.1, 0.2, 0.3, 0.4]);
 
     let mut integral = Integraal::default()
         .method(method)
@@ -47,7 +46,7 @@ fn inconsistent_parameters() {
         ))
     );
 
-    // this is equivalent to the first domain
+    // equivalent to the first domain
     let domain = DomainDescriptor::Uniform {
         start: 0.,
         step: 0.1,

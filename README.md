@@ -13,14 +13,16 @@ Language.
 
 ## Quickstart
 
-You can add Integraal to your project by adding this to its manifest:
+You can add `integraal` as a dependency of your project by adding the following lines to its Cargo.toml:
 
 ```toml
-# in the Cargo.toml
-
-[dependencies]
-# other deps...
+# [dependencies]
 integraal = { version = "*" }
+```
+or by running:
+
+```sh
+cargo add integraal
 ```
 
 The Rust Doc is available for usage instructions, examples are provided with the source code / in the repository.

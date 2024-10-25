@@ -8,7 +8,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  # RUSTFLAGS: "-D warnings"
 
 jobs:
   build_crates:
@@ -25,6 +24,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Build main crate
         run: cargo build -p integraal --all-features
+      - name: Build main crate (no features)
+        run: cargo build -p integraal
   build_examples:
     name: Build examples for ${{ matrix.os }}
     strategy:
