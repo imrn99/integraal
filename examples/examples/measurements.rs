@@ -15,7 +15,7 @@ fn main() {
         .collect();
 
     let mut integral = Integraal::default()
-        .domain(DomainDescriptor::Explicit(&domain))
+        .domain(DomainDescriptor::Explicit(domain))
         .function(FunctionDescriptor::Values(values))
         .method(ComputeMethod::Trapezoid);
 
