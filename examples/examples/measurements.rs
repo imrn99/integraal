@@ -1,6 +1,14 @@
+// we compute the superficial velocity of a fluid at a pipe section, using sampled data
+//
+// see `README.md` for more details.
+
+// --- IMPORTS
+
 use csv::ReaderBuilder;
 use integraal::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal};
 use std::path::Path;
+
+// --- CONTENT
 
 const RMAX: f64 = 41.;
 
@@ -28,6 +36,8 @@ fn main() {
     println!("   volume velocity:          {:7.3} cm^3/s", volume_velocity * 1.0e-2);
     println!("   superficial velocity:     {:7.3} m/s"   , volume_velocity / area);
 }
+
+// file parsing using the `csv` crate; retrieve radius & velocity samples
 
 fn parse_csv(path: impl AsRef<Path>) -> (Vec<f64>, Vec<f64>) {
     let mut builder = ReaderBuilder::new();

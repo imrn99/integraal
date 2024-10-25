@@ -10,7 +10,11 @@
 // - b  = 0.5    m
 // - q  = 1.0e-6 C
 
+// --- IMPORTS
+
 use integraal::{ComputeMethod, DomainDescriptor, FunctionDescriptor, Integraal};
+
+// --- CONTENT
 
 const E0: f64 = 100.0;
 const Q: f64 = 1.0e-6;
