@@ -4,11 +4,9 @@ use std::path::Path;
 
 const RMAX: f64 = 41.;
 
+#[rustfmt::skip]
 fn main() {
     let (domain, speed_values) = parse_csv("examples/anemometry.csv");
-
-    // we cannot integrate directly using the speed values
-    // we need to compose the integrated term since this is a weighted sum
 
     let values = speed_values
         .iter()
@@ -21,11 +19,14 @@ fn main() {
         .function(FunctionDescriptor::Values(values))
         .method(ComputeMethod::Trapezoid);
 
-    let mut res = integral.compute().unwrap();
+    let area = std::f64::consts::PI * RMAX.powi(2);
+    let volume_velocity = 2.0 * std::f64::consts::PI * integral.compute().unwrap();
 
-    res *= 2.0 / RMAX.powi(2);
-
-    println!("average fluid speed at pipe section: {res:.3} m/s");
+    // print results, with some unit shenanigans
+    println!("results:");
+    println!("   area of the section:      {:7.3} cm^2"  , area * 1.0e-2);
+    println!("   volume velocity:          {:7.3} cm^3/s", volume_velocity * 1.0e-2);
+    println!("   superficial velocity:     {:7.3} m/s"   , volume_velocity / area);
 }
 
 fn parse_csv(path: impl AsRef<Path>) -> (Vec<f64>, Vec<f64>) {
