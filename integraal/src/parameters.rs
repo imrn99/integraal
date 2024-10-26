@@ -48,7 +48,7 @@ where
 /// the left-rectangle (resp. right-rectangle) has to ignore the last (resp. first) value given
 /// in the descriptors. This can be visualized in the following example:
 ///
-/// ![COMPARISON](../compute_methods.svg)
+/// ![COMPARISON](https://imrn99.github.io/integraal/compute_methods.svg)
 ///
 /// Out of 11 samples, both methods compute the area of 10 polygons. In the case where the domain
 /// is uniform & described using a step, the eleventh sample value is useless (for a left-rectangle
