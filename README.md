@@ -17,7 +17,7 @@ You can add `integraal` as a dependency of your project by adding the following 
 
 ```toml
 # [dependencies]
-integraal = { version = "*" }
+integraal = { version = "0.1" }
 ```
 or by running:
 
