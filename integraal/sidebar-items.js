@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ComputeMethod","DomainDescriptor","FunctionDescriptor","IntegraalError"],"struct":["Integraal"],"trait":["Scalar"]};
